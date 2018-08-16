@@ -1,0 +1,57 @@
+package proy;
+
+
+public class Tablero {
+	
+	public char[][] tablero;
+	
+	@SuppressWarnings("unused")
+	public Tablero()
+	{
+		tablero = new char[3][3];
+		
+		for (char[] cs : tablero) 
+		{
+			for (char cs2 : cs) {
+				cs2 = ' ';
+			}
+		}
+	}
+	
+	public void show() {
+		int i = 1;
+		System.out.println();
+		System.out.println();
+		System.out.println(" |1|2|3|");
+		for (char[] cs : tablero) {
+			System.out.print(i+"|");
+			i++;
+			for (char cs2 : cs) {
+				System.out.print(cs2 + "|");
+			}
+
+			System.out.println();
+		}
+		System.out.println();
+	}
+	
+	public int espVac() {
+		int total = 0;
+		Tablero tab = this;
+		for (int b = 0 ; b < 9; b++)
+		{
+			System.out.print("'"+tab.tablero[b/3][b%3]+"'");
+			char comp = tab.tablero[b/3][b%3];
+			if ( comp == (' ')) )
+			{
+				System.out.println("hola");
+				total +=1;
+			}
+			System.out.println("fin");
+		}
+		
+		
+		return total;
+	}
+	
+}

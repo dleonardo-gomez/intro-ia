@@ -1,0 +1,91 @@
+package proy;
+
+
+public class Arbol {
+	
+	Tablero tab;
+	Arbol hijos[];
+	
+	public Arbol(char turn)//primer hijo 
+	{
+		int nivelesBajar = 2;
+		char tturn;
+		if ( turn == 'x')
+		{
+			tturn = 'o';
+		}
+		else
+		{
+			tturn = 'x';
+		}
+		
+		this.tab = new Tablero();
+		
+		this.hijos = new Arbol[9];
+		
+		System.out.println("-------"+this.tab.espVac()+"-------");
+		for (int a = 0 ; a < 9 ; a ++)
+		{
+			hijos[a] = new Arbol(this.tab , tturn, a, nivelesBajar );
+		}
+	}
+	private Arbol(Tablero anterior, char turn, int espvac, int nivelesBajar)//hijo normal intermedio 
+	{
+		char tturn;
+		if ( turn == 'x')
+		{
+			tturn = 'o';
+		}
+		else
+		{
+			tturn = 'x';
+		}
+		System.out.println(nivelesBajar);
+		int numvac = 0;
+		
+		this.tab = anterior;
+		
+		for (int b = 0 ; b < 9; b++)
+		{
+			if (this.tab.tablero[b/3][b%3] == ' ')
+			{
+				
+				if(numvac == espvac)
+				{
+					this.tab.tablero[b/3][b%3] = tturn;
+				}
+				numvac +=1;
+			}
+		}
+		
+		
+		int vac = this.tab.espVac();
+		
+		hijos = new Arbol[vac];
+		System.out.println(vac+"---------------------------");
+		for (int a =0 ; a<vac ; a++)
+		{
+			
+			hijos[a] = new Arbol(this.tab, tturn, a, nivelesBajar-1);
+			
+		}
+		System.out.println();
+	}
+
+	
+	int recorrer()
+	{
+		this.tab.show();
+		
+		int chijos = this.hijos.length;
+		
+		int cc =0 ;
+		for(int a = 0 ; a < chijos ; a ++)
+		{
+			cc = this.hijos[a].recorrer();
+		}
+		
+		return cc + 1;
+	}
+	
+}
