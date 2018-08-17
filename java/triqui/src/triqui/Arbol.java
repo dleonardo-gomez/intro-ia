@@ -45,26 +45,14 @@ public class Arbol {
 		{
 			tturn = 'x';
 		}
-		int numvac = 0;
+		
 		
 		this.tab = new Tablero(anterior);
 		
 		
-				
-		for (int b = 0 ; b < 9; b++)
-		{
-			int idato = this.tab.tablero[b/3][b%3] + 0;
-			if ( idato == 0)
-			{
-				if(numvac == espvac)
-				{
-					this.tab.tablero[b/3][b%3] = tturn;
-					b = 9;
-					
-				}
-				numvac +=1;
-			}
-		}
+		this.tab.modificarTablero(espvac, tturn); // se modifica el tablero en la posicion espvac
+		
+		
 		if(nivelesBajar > 0)
 		{
 			int vac = this.tab.espVac();
@@ -119,6 +107,7 @@ public class Arbol {
 		
 		int cc =0 ;
 		Arbol arbolMayor;
+		
 		int valorAM = 0;
 		
 		
@@ -128,8 +117,12 @@ public class Arbol {
 		}
 		
 		
+		// recorrer siempre devolviendo el mayor malor, sumar cuando sea movimiento (agregar) y restar cuando sea el contrario 
+		// movimiento seria x u o, que significaria quien tiene el turno en la raiz del arbol 
+		
 		if (this.nHijos > 1) // eliga al hijo con mayor valor
 		{// aunque no se como ponerle que tambien tenga en cuenta el valor del hijo mas valioso
+			
 			for(int a = 0 ; a < this.nHijos ; a ++)
 			{
 				int valorH = this.hijos[a].tab.heuristica();

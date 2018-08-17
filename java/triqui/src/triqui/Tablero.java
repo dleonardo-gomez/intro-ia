@@ -4,6 +4,8 @@ package triqui;
 public class Tablero{
 
 	public char[][] tablero;
+	
+	public int valor; //  valor en el que se guarda el valor de un tablero 
 
 	@SuppressWarnings("unused")
 
@@ -18,6 +20,7 @@ public class Tablero{
 				cs2 = ' ';
 			}
 		}
+		
 	}
 
 	public Tablero(Tablero tab) // para copiar tableros
@@ -212,6 +215,31 @@ public class Tablero{
 		}
 
 		return 0;
+	}
+
+	
+	
+	// se modifica el tablero en la posicion espvac, agregandole el simbolo en turn (x u o)
+	public void modificarTablero(int espvac, char turno) 
+	{
+		
+		int numvac = 0;
+		for (int b = 0 ; b < 9; b++)
+		{
+			int idato = this.tablero[b/3][b%3] + 0;
+			if ( idato == 0)
+			{
+				if(numvac == espvac)
+				{
+					this.tablero[b/3][b%3] = turno;
+					b = 9;
+					
+				}
+				numvac +=1;
+			}
+		}
+		
+		this.valor = this.heuristica(); // se le da valor al tablero despues de modificarlo
 	}
 }
 
