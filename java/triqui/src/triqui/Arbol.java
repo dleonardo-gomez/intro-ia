@@ -6,10 +6,11 @@ public class Arbol {
 	Tablero tab;
 	Arbol hijos[];
 	int nHijos;
+	int valor; // el valor es igual al valor propio mas el valor del mejor de los hijos
 	
 	int nivelesBajar = 2;
 	
-	public Arbol(/*char turn*/)// crea el primer hijo, padre de toda la creacion
+	public Arbol(Tablero actual)// crea el primer hijo, padre de toda la creacion
 	{
 		//int nivelesBajar = 1;
 		char tturn;
@@ -23,9 +24,10 @@ public class Arbol {
 		
 		//}
 		
-		this.tab = new Tablero();
+		this.tab = new Tablero(actual);
 		
-		this.hijos = new Arbol[9];
+		int vac = this.tab.espVac();
+		this.hijos = new Arbol[vac];
 		this.nHijos = 9;
 		for (int a = 0 ; a < 9 ; a ++)
 		{
@@ -106,8 +108,57 @@ public class Arbol {
 		return res;
 	}
 	
+	int podarArbol(int nn)// sigue el camino que merece ser seguido juju
+	{
+		
+//		if( nn != 0 && nn != 1) System.out.println(nn+"--------");
+		
+		
+		// para mostrar los tableros
+		//this.tab.show();
+		
+		int cc =0 ;
+		Arbol arbolMayor;
+		int valorAM = 0;
+		
+		
+		for(int a = 0 ; a < this.nHijos ; a ++)
+		{
+			cc += this.hijos[a].podarArbol(nn-1);
+		}
+		
+		
+		if (this.nHijos > 1) // eliga al hijo con mayor valor
+		{// aunque no se como ponerle que tambien tenga en cuenta el valor del hijo mas valioso
+			for(int a = 0 ; a < this.nHijos ; a ++)
+			{
+				int valorH = this.hijos[a].tab.heuristica();
+				
+				if (a == 0)
+				{
+					valorAM = valorH;
+					arbolMayor = this.hijos[a];
+				}
+				else if (valorH > valorAM)
+				{
+					valorAM = valorH;
+					arbolMayor = this.hijos[a];
+				}
+					
+			}
+		}
+		
+		//if (nn == 2) System.out.println(cc);
+		
+		int res = cc;
+		//if ( nn == 0)  
+			res +=  1;
+		
+		return res;
+	}
 	
-	/*int mejoresCaminos()// sigue el camino que merece ser seguido juju
+	
+	/*int mejoresCaminos()
 	{
 		int cc =0 ;
 		
