@@ -77,7 +77,7 @@ public class Arbol {
 	{// no me vino a la mente nada gracioso para decir por aca :v
 		
 		// para mostrar los tableros y su nivel
-		/*
+		//*
 		System.out.println("--------------------\n" +nn );
 		this.tab.show();
 		//*/

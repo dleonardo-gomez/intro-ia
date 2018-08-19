@@ -192,7 +192,9 @@ public class Tablero{
 	}
 
 	static public int comp(int nx, int no){
-		/*if     (no==3 && nx ==0){
+		/*
+		if     (no==3 && nx ==0){
+		
 			return -50;    
 		}
 		else if(no==2 && nx ==0){
@@ -201,9 +203,9 @@ public class Tablero{
 		else if(no==1 && nx ==0){
 			return -1;
 		}
-		/*else if(no >=1 && nx !=0){
+		else if(no >=1 && nx !=0){
 			return 0;
-		}////
+		}
 		else if(nx ==1 && no ==0){
 			return 1;
 		}
@@ -212,7 +214,8 @@ public class Tablero{
 		}
 		else if(nx ==3 && no ==0){
 			return 50;
-		}*/
+		}
+		//*/
 		
 		
 		return no - nx ; // ya que debe buscar maximisar o y minimisar x 
