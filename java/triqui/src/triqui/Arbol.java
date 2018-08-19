@@ -75,9 +75,6 @@ public class Arbol {
 	int recorrer(int nn)// reacorre el arbol
 	{// no me vino a la mente nada gracioso para decir por aca :v
 		
-//		if( nn != 0 && nn != 1) System.out.println(nn+"--------");
-		
-		
 		// para mostrar los tableros y su nivel
 		/*
 		System.out.println("--------------------\n" +nn );
@@ -130,7 +127,7 @@ public class Arbol {
 		
 		int val = this.valor + mayVal;
 		
-		if (nn != raiz)
+		//if (nn != raiz)
 		{
 			this.hijos = new Arbol[1];
 			this.hijos[0] = hijoFavorito;
