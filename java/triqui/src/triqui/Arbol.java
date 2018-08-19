@@ -1,5 +1,6 @@
 package triqui;
 
+import java.util.Random;
 
 public class Arbol {
 	
@@ -112,11 +113,22 @@ public class Arbol {
 					mayVal = valorH;
 					hijoFavorito = this.hijos[a];
 				}
+				else if(valorH == mayVal)
+				{
+					Random rand = new Random();
+					
+					if( (rand.nextInt(10)) > 5)
+					{
+						mayVal = valorH;
+						hijoFavorito =  this.hijos[a];
+					}
+				}
 				else if (valorH > mayVal)
 				{
 					mayVal = valorH;
 					hijoFavorito =  this.hijos[a];
 				}
+				
 					
 			}
 		}
