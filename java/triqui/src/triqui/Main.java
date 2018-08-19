@@ -13,14 +13,13 @@ public class Main {
 		
 		Arbol arb = new Arbol(tablero); // se crea el arbol con el primer tablero (vacio)
 		
-		System.out.println( "tam: "+ arb.recorrer(arb.nivelesBajar+1));
+		System.out.println( " antes de podar \n tam: "+ arb.recorrer(arb.nivelesBajar+1));
 		
-		/*
-		while (numPartidas < 9 && !partidoGanado)
-		{
-			
-		}
-		*/
+
+		arb.podarArbol(arb.nivelesBajar+1,arb.nivelesBajar+1);
+		
+		System.out.println( " despues de podar \n tam: "+ arb.recorrer(arb.nivelesBajar+1));
+		System.out.println("hijos de arb : "+ arb.hijos.length);
 		
 	}
 

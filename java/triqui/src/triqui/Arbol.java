@@ -62,7 +62,7 @@ public class Arbol {
 			{
 				hijos[a] = new Arbol(this.tab, tturn, a, nivelesBajar-1);
 			}
-			System.out.println();
+			//System.out.println();
 		}
 		else
 		{
@@ -78,11 +78,15 @@ public class Arbol {
 //		if( nn != 0 && nn != 1) System.out.println(nn+"--------");
 		
 		
-		// para mostrar los tableros
-		//this.tab.show();
+		// para mostrar los tableros y su nivel
+		/*
+		System.out.println("--------------------\n" +nn );
+		this.tab.show();
+		//*/
 		
 		int cc =0 ;
 		
+		//if (this.nHijos > 0) System.out.println(nn+"num hijos : "+ this.hijos.length);
 		for(int a = 0 ; a < this.nHijos ; a ++)
 		{
 			cc += this.hijos[a].recorrer(nn-1);
@@ -96,72 +100,44 @@ public class Arbol {
 		return res;
 	}
 	
-	int podarArbol(int nn)// sigue el camino que merece ser seguido juju
+	int podarArbol(int nn,int raiz)// sigue el camino que merece ser seguido juju
 	{
-		
-//		if( nn != 0 && nn != 1) System.out.println(nn+"--------");
-		
-		
-		// para mostrar los tableros
-		//this.tab.show();
-		
-		int cc =0 ;
-		Arbol arbolMayor;
-		
-		int valorAM = 0;
-		
-		
-		for(int a = 0 ; a < this.nHijos ; a ++)
+		Arbol hijoFavorito = null ; 
+		int mayVal = 0 ;
+		if (nn> 0)
 		{
-			cc += this.hijos[a].podarArbol(nn-1);
-		}
-		
-		
-		// recorrer siempre devolviendo el mayor malor, sumar cuando sea movimiento (agregar) y restar cuando sea el contrario 
-		// movimiento seria x u o, que significaria quien tiene el turno en la raiz del arbol 
-		
-		if (this.nHijos > 1) // eliga al hijo con mayor valor
-		{// aunque no se como ponerle que tambien tenga en cuenta el valor del hijo mas valioso
-			
 			for(int a = 0 ; a < this.nHijos ; a ++)
 			{
-				int valorH = this.hijos[a].tab.heuristica();
+				int valorH = this.hijos[a].podarArbol(nn-1,raiz);
 				
 				if (a == 0)
 				{
-					valorAM = valorH;
-					arbolMayor = this.hijos[a];
+					mayVal = valorH;
+					hijoFavorito = this.hijos[a];
 				}
-				else if (valorH > valorAM)
+				else if (valorH > mayVal)
 				{
-					valorAM = valorH;
-					arbolMayor = this.hijos[a];
+					mayVal = valorH;
+					hijoFavorito =  this.hijos[a];
 				}
 					
 			}
 		}
-		
-		//if (nn == 2) System.out.println(cc);
-		
-		int res = cc;
-		//if ( nn == 0)  
-			res +=  1;
-		
-		return res;
-	}
-	
-	
-	/*int mejoresCaminos()
-	{
-		int cc =0 ;
-		
-		for(int a = 0 ; a < this.nHijos ; a ++)
+		else if(nn == 0)
 		{
-			cc += this.hijos[a].recorrer();
+			return this.valor;
 		}
-		//if (nn == 2){System.out.println(cc);}
 		
-		return cc + 1;
+		int val = this.valor + mayVal;
+		
+		if (nn != raiz)
+		{
+			this.hijos = new Arbol[1];
+			this.hijos[0] = hijoFavorito;
+			this.nHijos = 1;
+		}
+		return val;
+		
 	}
-	*/
+	
 }

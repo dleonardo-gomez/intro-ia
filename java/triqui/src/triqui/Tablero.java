@@ -79,16 +79,16 @@ public class Tablero{
 
 	public int heuristica()
 	{
-
+		
 		char[][] t = this.tablero;
 		int nx=0, no=0, cont =0;
 
 		//Caso 1
 		for(int i=0;i<3;i++){
-			if(t[0][i] == 'X'){
+			if(t[0][i] == 'x'){
 				nx++;
 			}
-			else if(t[0][i] == 'O'){
+			else if(t[0][i] == 'o'){
 				no++;
 			}
 		}
@@ -99,10 +99,10 @@ public class Tablero{
 		no=0;
 
 		for(int i=0;i<3;i++){
-			if(t[1][i] == 'X'){
+			if(t[1][i] == 'x'){
 				nx++;
 			}
-			else if(t[1][i] == 'O'){
+			else if(t[1][i] == 'o'){
 				no++;
 			}
 		}
@@ -112,10 +112,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[2][i] == 'X'){
+			if(t[2][i] == 'x'){
 				nx++;
 			}
-			else if(t[2][i] == 'O'){
+			else if(t[2][i] == 'o'){
 				no++;
 			}
 		}
@@ -125,10 +125,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[i][0] == 'X'){
+			if(t[i][0] == 'x'){
 				nx++;
 			}
-			else if(t[i][0] == 'O'){
+			else if(t[i][0] == 'o'){
 				no++;
 			}
 		}
@@ -138,10 +138,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[i][1] == 'X'){
+			if(t[i][1] == 'x'){
 				nx++;
 			}
-			else if(t[i][1] == 'O'){
+			else if(t[i][1] == 'o'){
 				no++;
 			}
 		}
@@ -151,10 +151,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[i][2] == 'X'){
+			if(t[i][2] == 'x'){
 				nx++;
 			}
-			else if(t[i][2] == 'O'){
+			else if(t[i][2] == 'o'){
 				no++;
 			}
 		}
@@ -163,12 +163,12 @@ public class Tablero{
 		//Caso 7
 		nx=0;
 		no=0;
-		int nnx=0,nno=0;
+		//int nnx=0,nno=0;
 		for(int i=0;i<3;i++){
-			if(t[i][i] == 'X'){
+			if(t[i][i] == 'x'){
 				nx++;
 			}
-			else if(t[i][i] == 'O'){
+			else if(t[i][i] == 'o'){
 				no++;
 			}
 
@@ -179,10 +179,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[2-i][i] == 'X'){
+			if(t[2-i][i] == 'x'){
 				nx++;
 			}
-			else if(t[2-i][i] == 'O'){
+			else if(t[2-i][i] == 'o'){
 				no++;
 			}
 		}
@@ -192,7 +192,7 @@ public class Tablero{
 	}
 
 	static public int comp(int nx, int no){
-		if(no==3 && nx ==0){
+		/*if     (no==3 && nx ==0){
 			return -50;    
 		}
 		else if(no==2 && nx ==0){
@@ -201,9 +201,9 @@ public class Tablero{
 		else if(no==1 && nx ==0){
 			return -1;
 		}
-		else if(no >=1 && nx !=0){
+		/*else if(no >=1 && nx !=0){
 			return 0;
-		}
+		}////
 		else if(nx ==1 && no ==0){
 			return 1;
 		}
@@ -212,9 +212,10 @@ public class Tablero{
 		}
 		else if(nx ==3 && no ==0){
 			return 50;
-		}
-
-		return 0;
+		}*/
+		
+		
+		return no - nx ; // ya que debe buscar maximisar o y minimisar x 
 	}
 
 	
@@ -241,5 +242,7 @@ public class Tablero{
 		
 		this.valor = this.heuristica(); // se le da valor al tablero despues de modificarlo
 	}
+	
+	
 }
 
