@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 hola que mas me llamo daniel 
+=======
+No se para que carajos hacemos esto
+
+skdjskladdjkasladljñkljasd
+>>>>>>> cd68c048ab365228eaaad3dda734f308b4d0e851
