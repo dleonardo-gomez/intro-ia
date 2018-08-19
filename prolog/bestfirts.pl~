@@ -1,7 +1,7 @@
 
 
 /*
-%saca el mayor valor de una lista, tuve que copiar un codigo casi completamente para lograr entender esto....
+%saca el mayor valor de una lista, tuve que copiar un codigo casi completamente   para lograr entender esto....
 mayor(Ccab, [],Ccab) .
 mayor(Ccab, [Cab|L],May ):- Ccab > Cab, mayor(Ccab,L,May) .
 mayor(Ccab, [Cab|L],May ):- Ccab =< Cab, mayor(Cab,L,May) .

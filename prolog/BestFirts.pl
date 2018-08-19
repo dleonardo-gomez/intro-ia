@@ -11,12 +11,9 @@ mayor([Cab|L],May) :-mayor(Cab,L,May) .
 
 %saca el mayor valor de una lista
 mayor(Ccab, [],Ccab) .
-
-mayor(Ccab, [Cab|L],May ):- heu(Ccab,Cab,Val1,Val2), Val1 > Val2, mayor(Ccab,L,May) .
-mayor(Ccab, [Cab|L],May ):- heu(Ccab,Cab,Val1,Val2), Val1 =< Val2, mayor(Cab,L,May) .
-
-mayor(Ccab, [Cab|L],May ):- Ccab =< Cab,
-mayor(Cab,L,May) .
+mayor(Ccab, [Cab|L],May ):- heu(Ccab,Cab,Val1,Val2), Val1 > Val2, mayor(Ccab,L,May).
+mayor(Ccab, [Cab|L],May ):- heu(Ccab,Cab,Val1,Val2), Val1 =< Val2, mayor(Cab,L,May).
+mayor(Ccab, [Cab|L],May ):- Ccab =< Cab,mayor(Cab,L,May) .
 
 mayor([Cab|L],May) :-mayor(Cab,L,May) .
 
