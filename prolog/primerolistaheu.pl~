@@ -8,6 +8,9 @@ mayor(Ccab, [Cab|L],May ):- Ccab =< Cab, mayor(Cab,L,May) .
 mayor([Cab|L],May) :-mayor(Cab,L,May) .
 */
 
+:-dynamic
+    hola/1.
+ins(Val,[_|List],[List|Val]).
 %hola = [4,5,6,7].
 
 %hola([1,2,3,4,5].
