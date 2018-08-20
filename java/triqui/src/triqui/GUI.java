@@ -19,9 +19,14 @@ public class GUI extends JFrame implements ActionListener{
 	URL urlX = Main.class.getResource("/resources/X.png");
 	URL urlO = Main.class.getResource("/resources/O.png");
 	URL urlW = Main.class.getResource("/resources/W.png");
+	URL urlT = Main.class.getResource("/resources/Tr.png");
 	ImageIcon iconX = new ImageIcon(urlX);
 	ImageIcon iconO = new ImageIcon(urlO);
 	ImageIcon iconW = new ImageIcon(urlW);
+	ImageIcon iconT = new ImageIcon(urlT);
+	
+
+	
 	Arbol arb;
 	private JPanel contentPane;
 	private JButton button_0;
@@ -43,11 +48,15 @@ public class GUI extends JFrame implements ActionListener{
 	 * Create the frame.
 	 */
 	public GUI() {
+		
+		this.setIconImage(iconT.getImage());
+		setTitle("Triqui IA");
 		turno = 1;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 240, 340);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
@@ -128,6 +137,11 @@ public class GUI extends JFrame implements ActionListener{
 		actTurn.setBounds(112, 78, 46, 14);
 		actTurn.setText("O");
 		contentPane.add(actTurn);
+		
+		JLabel label = new JLabel("");
+		label.setIcon(new ImageIcon(GUI.class.getResource("/resources/bg.png")));
+		label.setBounds(0, 0, 224, 301);
+		contentPane.add(label);
 
 		tablero = new Tablero();
 	}

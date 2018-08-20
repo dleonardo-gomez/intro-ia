@@ -426,6 +426,7 @@ public class Tablero{
 		}
 		return a;
 	}
+	
 	public int casoX() {
 		if(this.espVac() == 8) {
 			int mark = 0;
