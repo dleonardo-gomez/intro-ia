@@ -39,7 +39,6 @@ public class Tablero{
 		valor = heuristica();
 	}
 
-	
 	public void show() {
 		int i = 1;
 		System.out.println();
@@ -190,10 +189,10 @@ public class Tablero{
 			return -100;    
 		}
 		else if(no==2 && nx ==0){
-			return -5;    
+			return -10;    
 		}
 		else if(no==1 && nx ==0){
-			return -1;
+			return -2;
 		}
 		else if(no !=0 && nx !=0){
 			return 0;
@@ -375,6 +374,17 @@ public class Tablero{
 		}
 	}
 	
+	public boolean modificarTableroPos(int a, int turno) 
+	{
+		// 0,0 = 0 | 3,3 = 8
+		if(this.tablero[a/3][a%3] == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	public int mejorJugada() {
 		
 		int n=0;
@@ -413,6 +423,70 @@ public class Tablero{
 			}
 		}
 		return a;
+	}
+	public int casoX() {
+		if(this.espVac() == 8) {
+			int mark = 0;
+			for(int i=0;i<9;i++) {
+				if(tablero[i/3][i%3] != 0) {
+					return 8-i;
+				}
+			}
+		}
+		else{
+			int cont = 0, mark = -1;
+			if(tablero[0][0] == 2) 
+				cont++;
+			else
+				mark = 0;
+			
+			if(tablero[0][2] == 2) 
+				cont++;
+			else
+				mark = 2;
+			
+			if(tablero[2][0] == 2) 
+				cont++;
+			else
+				mark = 6;
+			
+			if(tablero[2][2] == 2) 
+				cont++;			
+			else 
+				mark = 8;
+			
+			if(cont == 3) {
+				System.out.println("CASO X");
+				switch(mark) {
+					case(0):{
+						if(tablero[2][1] == 1) 
+							return 5;
+						else
+							return 7;
+					}
+					case(2):{
+						if(tablero[1][0] == 1) 
+							return 7;
+						else
+							return 3;
+					}
+					case(6):{
+						if(tablero[0][1] == 1) 
+							return 5;
+						else
+							return 1;
+					}
+					case(8):{
+						if(tablero[0][1] == 1) 
+							return 3;
+						else
+							return 1;
+					}
+				}
+				return this.mejorJugada();
+			}
+		}
+		return -1;
 	}
 }
 

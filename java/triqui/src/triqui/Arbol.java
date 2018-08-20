@@ -3,104 +3,120 @@ package triqui;
 import java.util.Random;
 
 public class Arbol {
-	
+
 	Tablero tab;
 	Arbol hijos[];
 	int nHijos;
-	int valor; // el valor es igual al valor propio mas el valor del mejor de los hijos
-	
 	int nivelesBajar = 2;
-	
-	public Arbol(Tablero actual)// crea el primer hijo, padre de toda la creacion
-	{
-		//int nivelesBajar = 1;
-		char tturn;
-		/*if ( turn == 'x'){
-			tturn = 'o';
-		}else{//*/
-		
-		tturn = 'x'; // ya que esto seria el equivalente al turno actual / el ultimo turno jugado
-		// esto se debe a que lo unico que realmente necesitamos calcular son los proximos movimientos de o
-		//no de x, siendo que es el jugador
-		
-		//}
-		
+
+	// Crea la raiz, el tablero antes del movimiento
+	public Arbol(Tablero actual) {
+		// Turno X = 1, O = 2, el turno actual es el del oponente
+		int turnoActual = 2;
 		this.tab = new Tablero(actual);
-		
-		int vac = this.tab.espVac();
-		this.hijos = new Arbol[vac];
-		this.nHijos = 9;
-		for (int a = 0 ; a < 9 ; a ++)
+		nHijos = this.tab.espVac();
+		this.hijos = new Arbol[nHijos];
+
+		for (int a = 0 ; a < nHijos ; a++)
 		{
-			hijos[a] = new Arbol(this.tab , tturn, a, nivelesBajar );
+			hijos[a] = new Arbol(this.tab , turnoActual, nivelesBajar, a);
 		}
-	}
-	
-	private Arbol(Tablero anterior, char turn, int espvac, int nivelesBajar)//hijo normal intermedio, herederos de la creacion
-	{
-		char tturn;
-		if ( turn == 'x')
-		{
-			tturn = 'o';
-		}
-		else
-		{
-			tturn = 'x';
-		}
-		
-		
-		this.tab = new Tablero(anterior);
-		
-		
-		this.tab.modificarTablero(espvac, tturn); // se modifica el tablero en la posicion espvac
-		
-		
-		if(nivelesBajar > 0)
-		{
-			int vac = this.tab.espVac();
-			this.nHijos = vac;
-			hijos = new Arbol[vac];
-			for (int a =0 ; a<vac ; a++)
-			{
-				hijos[a] = new Arbol(this.tab, tturn, a, nivelesBajar-1);
-			}
-			//System.out.println();
-		}
-		else
-		{
-			this.nHijos = 0;
-		}
-		
 	}
 
-	
-	int recorrer(int nn)// reacorre el arbol
-	{// no me vino a la mente nada gracioso para decir por aca :v
-		
-		// para mostrar los tableros y su nivel
-		//*
-		System.out.println("--------------------\n" +nn );
-		this.tab.show();
-		//*/
-		
-		int cc =0 ;
-		
-		//if (this.nHijos > 0) System.out.println(nn+"num hijos : "+ this.hijos.length);
-		for(int a = 0 ; a < this.nHijos ; a ++)
-		{
-			cc += this.hijos[a].recorrer(nn-1);
+	// Creación de los siguientes nodos
+	private Arbol(Tablero anterior, int turn, int nivelesBajar, int numTableroHijo) {
+		this.nHijos = anterior.espVac() - 1;
+		int turnoActual = (turn%2)+1;
+		if(nHijos < 0) {
+			int i = -1;
+			while(numTableroHijo >= 0 && i<8) {
+				i++;
+				if(this.tab.modificarTablero(i, turnoActual)) {
+					return;
+				}
+			}
 		}
-		//if (nn == 2) System.out.println(cc);
-		
-		int res = cc;
-		//if ( nn == 0)  
-			res +=  1;
-		
-		return res;
+		else {
+			this.tab = new Tablero(anterior);
+
+			int i = -1;
+			while(numTableroHijo >= 0 && i<8) {
+				i++;
+				if(this.tab.modificarTableroPos(i, turnoActual)) {
+					numTableroHijo--;
+				}
+			}
+			this.tab.modificarTablero(i, turnoActual);
+			if(nivelesBajar > 0){
+				hijos = new Arbol[nHijos];
+				for (int a =0 ; a<nHijos ; a++){
+					hijos[a] = new Arbol(this.tab, turnoActual, nivelesBajar-1,a);
+				}
+			}
+		}
 	}
-	
-	int podarArbol(int nn,int raiz)// sigue el camino que merece ser seguido juju
-	{
+
+	public void podarArbol() {
+		this.podarArbol(nivelesBajar, -500, true);
+	}
+
+	// True - Buscar los maximos, False - Buscar los minimos
+	public int podarArbol(int nivel, int alfa, boolean type) {
+		
+		if(nivel>0) {
+			Random rand = new Random();
+			if(type) { // Maximos
+				int maxAlpha = -500, hijo=-1;
+				for(int i=0;i<nHijos;i++) {
+					int x = hijos[i].podarArbol(nivel-1, alfa, true);
+					if(rand.nextInt(2) == 0) {
+						if(maxAlpha < x) {
+							maxAlpha = x;
+							hijo = i;
+						}
+					}
+					else {
+						if(maxAlpha <= x) {
+							maxAlpha = x;
+							hijo = i;
+						}
+					}
+				}
+				Arbol auxiliar[] = new Arbol[1];
+				auxiliar[0] = hijos[hijo];
+				hijos = auxiliar;
+				return maxAlpha;
+			}
+			else { // Minimos
+				int minAlpha = 500, hijo = -1;
+				for(int i=0;i<nHijos;i++) {
+					int x = hijos[i].podarArbol(nivel-1, alfa, true);
+					if(rand.nextInt(2) == 0) {
+						if(minAlpha > x) {
+							minAlpha = x;
+							hijo = i;
+						}
+					}
+					else {
+						if(minAlpha >= x) {
+							minAlpha = x;
+							hijo = i;
+						}
+					}
+				}
+				Arbol auxiliar[] = new Arbol[1];
+				auxiliar[0] = hijos[hijo];
+				hijos = auxiliar;
+				return minAlpha;
+			}
+		}
+		else {
+			return this.tab.heuristica();
+		}
+	}
+
+	// Uso del poderoso poder que usa el poderoso alfa/beta
+/*	public int podarArbol(int nn,int raiz, int k) {
 		Arbol hijoFavorito = null ; 
 		int mayVal = 0 ;
 		if (nn> 0)
@@ -108,7 +124,7 @@ public class Arbol {
 			for(int a = 0 ; a < this.nHijos ; a ++)
 			{
 				int valorH = this.hijos[a].podarArbol(nn-1,raiz);
-				
+
 				if (a == 0)
 				{
 					mayVal = valorH;
@@ -117,7 +133,7 @@ public class Arbol {
 				else if(valorH == mayVal)
 				{
 					Random rand = new Random();
-					
+
 					if( (rand.nextInt(10)) > 5)
 					{
 						mayVal = valorH;
@@ -129,17 +145,17 @@ public class Arbol {
 					mayVal = valorH;
 					hijoFavorito =  this.hijos[a];
 				}
-				
-					
+
+
 			}
 		}
 		else if(nn == 0)
 		{
 			return this.valor;
 		}
-		
+
 		int val = this.valor + mayVal;
-		
+
 		//if (nn != raiz)
 		{
 			this.hijos = new Arbol[1];
@@ -147,7 +163,7 @@ public class Arbol {
 			this.nHijos = 1;
 		}
 		return val;
-		
-	}
-	
+
+	}*/
+
 }

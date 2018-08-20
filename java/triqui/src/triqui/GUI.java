@@ -244,9 +244,13 @@ public class GUI extends JFrame implements ActionListener{
 		else {
 			if(turno == 0) {
 				arb = new Arbol(tablero);
-				arb.podarArbol(arb.nivelesBajar+1,arb.nivelesBajar+1);
-				arb.hijos[0].tab.show();
-				int jugadaSig = tablero.marcarJugada(arb.hijos[0].tab);
+				arb.podarArbol();
+				int jugadaSig;
+				if(tablero.casoX() != -1) {
+					jugadaSig = tablero.casoX();
+				}else {
+					jugadaSig = tablero.marcarJugada(arb.hijos[0].tab);
+				}
 				ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Integer.toString(jugadaSig));
 				this.actionPerformed(event);
 			}
