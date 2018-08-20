@@ -47,7 +47,9 @@ listPri(CC,[_|L],Val):-
 
 % la lista de prioridades, con que mas al frente este el dato, mayor
 % valor tiene
-prioridades(Pp) :- Pp = [4,5,3,6].
+
+prioridades(Pp) :- Pp = [4,5,3,6].%prueba 
+prioridades(Pp) :- Pp = [coger,mover,soltar].
 
 %llamada inicial
 listPri(CC,Val):-
