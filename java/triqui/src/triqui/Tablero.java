@@ -190,10 +190,10 @@ public class Tablero{
 			return -100;    
 		}
 		else if(no==2 && nx ==0){
-			return -10;    
+			return -15;    
 		}
 		else if(no==1 && nx ==0){
-			return -1;
+			return -2;
 		}
 		else if(no !=0 && nx !=0){
 			return 0;
