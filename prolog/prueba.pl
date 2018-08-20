@@ -20,7 +20,8 @@ cicloACompObjetivo():-
     (   cActCuartoRob(CAr),cObjCuartoRob(COr), CAr \== COr)),
 
     %entonces decide actuar
-    actuar()
+    actuar(),
+    cicloACompObjetivo()
     .
 
 
