@@ -1,55 +1,62 @@
 package triqui;
 
-
+@SuppressWarnings("unused")
 public class Tablero{
 
-	public char[][] tablero;
+	/*' '= 0 
+	 * X = 1
+	 * O = 2 
+	 */
+	public int[][] tablero;
+	public int win; // X = 1 ; O = 2
+	public int valor; //  valor en el que se guarda el valor huristico del tablero 
 	
-	public int valor; //  valor en el que se guarda el valor de un tablero 
-
-	@SuppressWarnings("unused")
-
 	public Tablero()// para crear nuevos y bonitos tableros
 	{
-		tablero = new char[3][3];
+		tablero = new int[3][3];
 
-		for (char[] cs : tablero) 
+		for (int[] cs : tablero) 
 		{
-			for (char cs2 : cs) 
+			for (int cs2 : cs) 
 			{
-				cs2 = ' ';
+				cs2 = 0;
 			}
 		}
-		
+		win = 0;
 	}
 
 	public Tablero(Tablero tab) // para copiar tableros
 	{
-		tablero = new char[3][3];
+		tablero = new int[3][3];
 
 		for (int a =0 ; a < 3 ; a ++) 
 		{
 			for (int b = 0; b < 3 ; b++ ) 
 			{
-				tablero[a][b] = tab.tablero[a][b];
+				this.tablero[a][b] = tab.tablero[a][b];
 			}
 		}
+		valor = heuristica();
 	}
 
+	
 	public void show() {
 		int i = 1;
 		System.out.println();
-		System.out.println(" |1|2|3|");
-		for (char[] cs : tablero) {
-			System.out.print(i+"|");
-			i++;
-			for (char cs2 : cs) {
-				System.out.print(cs2 + "|");
+		for (int[] cs : tablero) {
+			System.out.print("|");
+			for (int cs2 : cs) {
+				if(cs2==0)
+					System.out.print(" |");
+				else if(cs2==1)
+					System.out.print("X|");
+				else
+					System.out.print("O|");
 			}
 
 			System.out.println();
 		}
-		System.out.println();
+		System.out.println(valor);
 	}
 
 	public int espVac() {
@@ -57,38 +64,25 @@ public class Tablero{
 		Tablero tab = this;
 		for (int b = 0 ; b < 9; b++)
 		{
-			char espacio = ' ';
-			char comp = tab.tablero[b/3][b%3];
-
-			int icomp = comp + 0;
-			//int iespacio = espacio +0;
-			//System.out.print("'"+icomp+"'" + 0+"'");
-
-			if ( icomp == 0/*iespacio*/ )
+			if ( tab.tablero[b/3][b%3] == 0)
 			{
-				//System.out.println("hola");
 				total +=1;
 			}
-			//System.out.println("fin");
 		}
-
-
 		return total;
 	}
 
-
-	public int heuristica()
-	{
+	public int heuristica(){
 		
-		char[][] t = this.tablero;
+		int[][] t = this.tablero;
 		int nx=0, no=0, cont =0;
 
 		//Caso 1
 		for(int i=0;i<3;i++){
-			if(t[0][i] == 'x'){
+			if(t[0][i] == 1){
 				nx++;
 			}
-			else if(t[0][i] == 'o'){
+			else if(t[0][i] == 2){
 				no++;
 			}
 		}
@@ -99,10 +93,10 @@ public class Tablero{
 		no=0;
 
 		for(int i=0;i<3;i++){
-			if(t[1][i] == 'x'){
+			if(t[1][i] == 1){
 				nx++;
 			}
-			else if(t[1][i] == 'o'){
+			else if(t[1][i] == 2){
 				no++;
 			}
 		}
@@ -112,10 +106,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[2][i] == 'x'){
+			if(t[2][i] == 1){
 				nx++;
 			}
-			else if(t[2][i] == 'o'){
+			else if(t[2][i] == 2){
 				no++;
 			}
 		}
@@ -125,10 +119,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[i][0] == 'x'){
+			if(t[i][0] == 1){
 				nx++;
 			}
-			else if(t[i][0] == 'o'){
+			else if(t[i][0] == 2){
 				no++;
 			}
 		}
@@ -138,10 +132,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[i][1] == 'x'){
+			if(t[i][1] == 1){
 				nx++;
 			}
-			else if(t[i][1] == 'o'){
+			else if(t[i][1] == 2){
 				no++;
 			}
 		}
@@ -151,10 +145,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[i][2] == 'x'){
+			if(t[i][2] == 1){
 				nx++;
 			}
-			else if(t[i][2] == 'o'){
+			else if(t[i][2] == 2){
 				no++;
 			}
 		}
@@ -163,12 +157,12 @@ public class Tablero{
 		//Caso 7
 		nx=0;
 		no=0;
-		//int nnx=0,nno=0;
+		int nnx=0,nno=0;
 		for(int i=0;i<3;i++){
-			if(t[i][i] == 'x'){
+			if(t[i][i] == 1){
 				nx++;
 			}
-			else if(t[i][i] == 'o'){
+			else if(t[i][i] == 2){
 				no++;
 			}
 
@@ -179,10 +173,10 @@ public class Tablero{
 		nx=0;
 		no=0;
 		for(int i=0;i<3;i++){
-			if(t[2-i][i] == 'x'){
+			if(t[2-i][i] == 1){
 				nx++;
 			}
-			else if(t[2-i][i] == 'o'){
+			else if(t[2-i][i] == 2){
 				no++;
 			}
 		}
@@ -191,19 +185,17 @@ public class Tablero{
 		return cont;
 	}
 
-	static public int comp(int nx, int no){
-		/*
-		if     (no==3 && nx ==0){
-		
-			return -50;    
+	static private int comp(int nx, int no){
+		if(no==3 && nx ==0){
+			return -100;    
 		}
 		else if(no==2 && nx ==0){
-			return -5;    
+			return -10;    
 		}
 		else if(no==1 && nx ==0){
 			return -1;
 		}
-		else if(no >=1 && nx !=0){
+		else if(no !=0 && nx !=0){
 			return 0;
 		}
 		else if(nx ==1 && no ==0){
@@ -213,39 +205,205 @@ public class Tablero{
 			return 5;
 		}
 		else if(nx ==3 && no ==0){
-			return 50;
+			return 100;
 		}
-		//*/
-		
-		
-		return no - nx ; // ya que debe buscar maximisar o y minimisar x 
+
+		return 0;
 	}
 
-	
-	
-	// se modifica el tablero en la posicion espvac, agregandole el simbolo en turn (x u o)
-	public void modificarTablero(int espvac, char turno) 
-	{
+	public void ganador() {
+		if(espVac()==0) {
+			win = -1;
+		}
+		int nx=0,no=0;
+		int[][] t = tablero;
 		
-		int numvac = 0;
-		for (int b = 0 ; b < 9; b++)
-		{
-			int idato = this.tablero[b/3][b%3] + 0;
-			if ( idato == 0)
-			{
-				if(numvac == espvac)
-				{
-					this.tablero[b/3][b%3] = turno;
-					b = 9;
-					
-				}
-				numvac +=1;
+		// Caso 1
+		for(int i=0;i<3;i++){
+			if(t[0][i] == 1){
+				nx++;
+			}
+			else if(t[0][i] == 2){
+				no++;
+			}
+
+		}
+		
+		if(nx==3)
+			win = 1;
+		else if(no==3)
+			win = 2;
+		nx=0;
+		no=0;
+
+		// Caso 2
+		for(int i=0;i<3;i++){
+			if(t[1][i] == 1){
+				nx++;
+			}
+			else if(t[1][i] == 2){
+				no++;
+			}
+
+		}
+
+		if(nx==3)
+			win = 1;
+		else if(no==3)
+			win = 2;
+		nx=0;
+		no=0;
+
+		// Caso 3
+		for(int i=0;i<3;i++){
+			if(t[2][i] == 1){
+				nx++;
+			}
+			else if(t[2][i] == 2){
+				no++;
+			}
+
+		}
+
+		if(nx==3)
+			win = 1;
+		else if(no==3)
+			win = 2;
+		nx=0;
+		no=0;
+
+		// Caso 4
+		for(int i=0;i<3;i++){
+			if(t[i][0] == 1){
+				nx++;
+			}
+			else if(t[i][0] == 2){
+				no++;
+			}
+
+		}
+
+		if(nx==3)
+			win = 1;
+		else if(no==3)
+			win = 2;
+		nx=0;
+		no=0;
+
+		// Caso 5
+		for(int i=0;i<3;i++){
+			if(t[i][1] == 1){
+				nx++;
+			}
+			else if(t[i][1] == 2){
+				no++;
+			}
+
+		}
+
+		if(nx==3)
+			win = 1;
+		else if(no==3)
+			win = 2;
+		nx=0;
+		no=0;
+
+		// Caso 6
+		for(int i=0;i<3;i++){
+			if(t[i][2] == 1){
+				nx++;
+			}
+			else if(t[i][2] == 2){
+				no++;
+			}
+
+		}
+
+		if(nx==3)
+			win = 1;
+		else if(no==3)
+			win = 2;
+		nx=0;
+		no=0;
+
+		// Caso 7
+		for(int i=0;i<3;i++){
+			if(t[i][i] == 1){
+				nx++;
+			}
+			else if(t[i][i] == 2){
+				no++;
+			}
+
+		}
+
+		if(nx==3)
+			win = 1;
+		else if(no==3)
+			win = 2;
+		nx=0;
+		no=0;
+
+		// Caso 8
+		for(int i=0;i<3;i++){
+			if(t[2-i][i] == 1){
+				nx++;
+			}
+			else if(t[2-i][i] == 2){
+				no++;
 			}
 		}
 		
-		this.valor = this.heuristica(); // se le da valor al tablero despues de modificarlo
+		if(nx==3)
+			win = 1;
+		else if(no==3)
+			win = 2;
+	}
+
+	// se modifica el tablero en la posicion espvac, agregandole el simbolo en turn (x u o)
+	public boolean modificarTablero(int a, int turno) 
+	{
+		// 0,0 = 0 | 3,3 = 8
+		if(this.tablero[a/3][a%3] == 0) {
+			this.tablero[a/3][a%3] = turno;
+			this.valor = this.heuristica(); // se le da valor al tablero despues de modificarlo
+			this.ganador();
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
-	
+	public int mejorJugada() {
+		
+		int n=0;
+		int tam = espVac();
+		Tablero heritage[];
+		int valores[] = new int[tam];
+		heritage = new Tablero[tam];
+		for(int i=0;i<tam;i++) {
+			heritage[i] = new Tablero(this);
+		}
+		for(int i=0,j=0;i<tam;i++,j++) {
+			boolean x;
+			x = heritage[i].modificarTablero(j, 1);
+			if(!x) {
+				i--;
+			}
+			else {
+				valores[i] = j;				
+			}
+		}
+		int max = -500;
+		for(int i=0;i<tam;i++) {
+			if(max<heritage[i].valor) {
+				max = heritage[i].valor;
+				n = i;
+			}
+		}
+		return valores[n];
+	}
+
 }
 

@@ -35,6 +35,7 @@ public class Arbol {
 			hijos[a] = new Arbol(this.tab , tturn, a, nivelesBajar );
 		}
 	}
+	
 	private Arbol(Tablero anterior, char turn, int espvac, int nivelesBajar)//hijo normal intermedio, herederos de la creacion
 	{
 		char tturn;
