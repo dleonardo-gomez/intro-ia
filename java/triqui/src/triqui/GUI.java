@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -15,9 +16,12 @@ import javax.swing.JOptionPane;
 public class GUI extends JFrame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
-	ImageIcon iconX = new ImageIcon("./src/triqui/X.png");
-	ImageIcon iconO = new ImageIcon("./src/triqui/O.png");
-	ImageIcon iconW = new ImageIcon("./src/triqui/W.png");
+	URL urlX = Main.class.getResource("/resources/X.png");
+	URL urlO = Main.class.getResource("/resources/O.png");
+	URL urlW = Main.class.getResource("/resources/W.png");
+	ImageIcon iconX = new ImageIcon(urlX);
+	ImageIcon iconO = new ImageIcon(urlO);
+	ImageIcon iconW = new ImageIcon(urlW);
 	Arbol arb;
 	private JPanel contentPane;
 	private JButton button_0;

@@ -1,5 +1,7 @@
 package triqui;
 
+import java.util.Random;
+
 @SuppressWarnings("unused")
 public class Tablero{
 
@@ -429,58 +431,32 @@ public class Tablero{
 			int mark = 0;
 			for(int i=0;i<9;i++) {
 				if(tablero[i/3][i%3] != 0) {
-					return 8-i;
+					return 4;
 				}
 			}
 		}
 		else{
 			int cont = 0, mark = -1;
-			if(tablero[0][0] == 2) 
-				cont++;
-			else
-				mark = 0;
+			for(int i=0;i<9;i++) {
+				if(tablero[i/3][i%3] == 2) {
+					cont++;
+				}
+			}
 			
-			if(tablero[0][2] == 2) 
-				cont++;
-			else
-				mark = 2;
-			
-			if(tablero[2][0] == 2) 
-				cont++;
-			else
-				mark = 6;
-			
-			if(tablero[2][2] == 2) 
-				cont++;			
-			else 
-				mark = 8;
-			
-			if(cont == 3) {
-				System.out.println("CASO X");
-				switch(mark) {
+			if(cont == 2) {
+				Random rand = new Random();
+				switch(rand.nextInt(4)) {
 					case(0):{
-						if(tablero[2][1] == 1) 
-							return 5;
-						else
-							return 7;
+						return 1;
+					}
+					case(1):{
+						return 3;
 					}
 					case(2):{
-						if(tablero[1][0] == 1) 
-							return 7;
-						else
-							return 3;
+						return 5;
 					}
-					case(6):{
-						if(tablero[0][1] == 1) 
-							return 5;
-						else
-							return 1;
-					}
-					case(8):{
-						if(tablero[0][1] == 1) 
-							return 3;
-						else
-							return 1;
+					case(3):{
+						return 7;
 					}
 				}
 				return this.mejorJugada();
