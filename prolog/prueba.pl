@@ -50,12 +50,15 @@ actuar():-accion(N), N = 3, /**/ soltarC().
 
 % algo le llama la atencion en las cajas regadas en el piso, por lo que
 % decide recojer una
-accion(N,Col):- aCoger(AC,Col),aCCuarto(ACC,_,_),aSoltar(AS),AC > ACC , AC > AS , N is 1.
+accion(N,Col):- aCoger(AC,Col),aCCuarto(ACC,_,_),aSoltar(AS),
+    AC > ACC , AC > AS , N is 1.
 % le dan unas extrañas ganas de cambiar de cuarto, por lo que cambia de
 % cuarto
-accion(N,H1,H2):- aCoger(AC,_),aCCuarto(ACC,H1,H2),aSoltar(AS),AC < ACC , AC > AS , N is 2 .
+accion(N,H1,H2):- aCoger(AC,_),aCCuarto(ACC,H1,H2),aSoltar(AS),
+    AC < ACC , AC > AS , N is 2 .
 % decide que realmente quiere soltar el cubo que tiene
-accion(N):- aCoger(AC,_),aCCuarto(ACC,_,_),aSoltar(AS),AC > ACC , AC < AS , N is 3 .
+accion(N):- aCoger(AC,_),aCCuarto(ACC,_,_),aSoltar(AS),
+    AC > ACC , AC < AS , N is 3 .
 
 
 
@@ -104,6 +107,12 @@ aCoger(Imp,Col):-
 %importancia 10
 aCCuarto(Imp,H,H2):- %con caja
    /**/ noplib,
+   cuboenpinza(Col),
+   cObjCuartoC(HH,Col),
+   cActCuartoRob(Cr),
+   Cr \== HH,
+   H is Cr,
+   H2 is HH,
    Imp is 10.
 
 aCCuarto(Imp,H,H2):- %sin caja

@@ -29,8 +29,8 @@ cicloACompObjetivo():-
 
 %esta es la funcion que se llama para decidir cual es el siguiente paso
 actuar():-accion(N,Col), N = 1 ,/**/ coger(Col).
-actuar():-accion(N,H1,H2), N = 2,cambiarC(H1,H2).
-actuar():-accion(N), N = 3, soltarC().
+actuar():-accion(N,H1,H2), N = 2,/**/ cambiarC(H1,H2).
+actuar():-accion(N), N = 3, /**/ soltarC().
 
 
 
@@ -50,12 +50,15 @@ actuar():-accion(N), N = 3, soltarC().
 
 % algo le llama la atencion en las cajas regadas en el piso, por lo que
 % decide recojer una
-accion(N,Col):- aCoger(AC,Col),aCCuarto(ACC,_,_),aSoltar(AS),AC > ACC , AC > AS , N is 1.
+accion(N,Col):- aCoger(AC,Col),aCCuarto(ACC,_,_),aSoltar(AS),
+    AC > ACC , AC > AS , N is 1.
 % le dan unas extrañas ganas de cambiar de cuarto, por lo que cambia de
 % cuarto
-accion(N,H1,H2):- aCoger(AC,_),aCCuarto(ACC,H1,H2),aSoltar(AS),AC < ACC , AC > AS , N is 2 .
+accion(N,H1,H2):- aCoger(AC,_),aCCuarto(ACC,H1,H2),aSoltar(AS),
+    AC < ACC , AC > AS , N is 2 .
 % decide que realmente quiere soltar el cubo que tiene
-accion(N):- aCoger(AC,_),aCCuarto(ACC,_,_),aSoltar(AS),AC > ACC , AC < AS , N is 3 .
+accion(N):- aCoger(AC,_),aCCuarto(ACC,_,_),aSoltar(AS),
+    AC > ACC , AC < AS , N is 3 .
 
 
 
