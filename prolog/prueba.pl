@@ -107,7 +107,7 @@ aCoger(Imp,Col):-
 %importancia 10
 aCCuarto(Imp,H,H2):- %con caja
    /**/ noplib,
-   cuboenpinza(Col),
+   /**/ cuboenpinza(Col),
    cObjCuartoC(HH,Col),
    cActCuartoRob(Cr),
    Cr \== HH,
