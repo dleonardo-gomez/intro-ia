@@ -190,10 +190,10 @@ public class Tablero{
 			return -100;    
 		}
 		else if(no==2 && nx ==0){
-			return -15;    
+			return -5;    
 		}
 		else if(no==1 && nx ==0){
-			return -2;
+			return -1;
 		}
 		else if(no !=0 && nx !=0){
 			return 0;
@@ -404,6 +404,17 @@ public class Tablero{
 		}
 		return valores[n];
 	}
-
+	
+	public int marcarJugada(Tablero t) {
+		int a = -1;
+		for(int i=0;i<9;i++) {
+			if(this.tablero[i/3][i%3] != t.tablero[i/3][i%3]) {
+				a = i;
+			}
+		}
+		return a;
+	}
 }
+
+
 

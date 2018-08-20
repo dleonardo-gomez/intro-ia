@@ -18,6 +18,7 @@ public class GUI extends JFrame implements ActionListener{
 	ImageIcon iconX = new ImageIcon("./src/triqui/X.png");
 	ImageIcon iconO = new ImageIcon("./src/triqui/O.png");
 	ImageIcon iconW = new ImageIcon("./src/triqui/W.png");
+	Arbol arb;
 	private JPanel contentPane;
 	private JButton button_0;
 	private JButton button_1;
@@ -137,7 +138,7 @@ public class GUI extends JFrame implements ActionListener{
 		if(action.equals("New")){
 			cambio = false;
 			turno = 1;
-			actTurn.setText("X");
+			actTurn.setText("O");
 			tablero = new Tablero();
 			button_0.setIcon(iconW);
 			button_1.setIcon(iconW);
@@ -231,15 +232,22 @@ public class GUI extends JFrame implements ActionListener{
 
 		}
 		
-		if(tablero.win > 0) {
-			infoMensaje("Ganó el jugador "+ tablero.win);
+		if(tablero.win == 2) {
+			infoMensaje("Ganó el jugador");
+		}
+		else if(tablero.win == 1) {
+			infoMensaje("Ganó la Inteligencia Artificial");
 		}
 		else if(tablero.win == -1){
 			infoMensaje("Juego Empatado");
 		}
 		else {
 			if(turno == 0) {
-				ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Integer.toString(tablero.mejorJugada()));
+				arb = new Arbol(tablero);
+				arb.podarArbol(arb.nivelesBajar+1,arb.nivelesBajar+1);
+				arb.hijos[0].tab.show();
+				int jugadaSig = tablero.marcarJugada(arb.hijos[0].tab);
+				ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Integer.toString(jugadaSig));
 				this.actionPerformed(event);
 			}
 		}

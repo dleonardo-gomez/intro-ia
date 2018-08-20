@@ -17,6 +17,7 @@ public class Main {
 		
 		System.out.println( " despues de podar \n tam: "+ arb.recorrer(arb.nivelesBajar+1));
 		System.out.println("hijos de arb : "+ arb.hijos.length);
+		arb.hijos[0].tab.show();
 		
 	}
 
