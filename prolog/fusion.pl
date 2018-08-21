@@ -75,10 +75,14 @@ menu:- write('1. coger: (Nombre de la caja)'),nl,write('2. vacia pinza ?'),nl
 
 %cajasCuarto():- write('Cuarto'), read(H), cajaEn(C,H), write(C),nl.
 %Esto lo voy a cambiar, toca quitar elementos de una lista.
-compararCoger(Cajita,L):- Cajita == azul,write('quita azul'), L = [verde],!.
-compararCoger(Cajita,L):- Cajita == verde, write('quita verde') ,L = [azul],!.
-compararCoger(Cajita,L):- Cajita == azul,write('quita azul'),cajaEn(verde,h2), L = [],!.
-compararCoger(Cajita,L):- Cajita == verde,cajaEn(azul,h2),write('quita verde'), L = [],!.
+compararCoger(Cajita,L):-
+    Cajita == azul,write('quita azul'), L = [verde],!.
+compararCoger(Cajita,L):-
+    Cajita == verde, write('quita verde') ,L = [azul],!.
+compararCoger(Cajita,L):-
+    Cajita == azul,write('quita azul'),cajaEn(verde,h2), L = [],!.
+compararCoger(Cajita,L):-
+    Cajita == verde,cajaEn(azul,h2),write('quita verde'), L = [],!.
 
 
 my_remove_one_element(X, [X|Xs], Xs).
@@ -170,7 +174,7 @@ accion():- aCoger(AC,Col),aCCuarto(ACC,H1,H2),aSoltar(AS),
                                               ) .
 
 
-% importancia 15, ya que verdaderamente es lo que nuestro pequeño rob mas
+% importancia 15, ya que verdaderamente es lo que nuestro pequeño rob mascajasHabitacion
 % desea en la vida
 %cajaEn(azul,h2)
 aCoger(Imp,azul):- %para la caja azul
