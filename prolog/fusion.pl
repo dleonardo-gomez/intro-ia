@@ -15,6 +15,7 @@
 estado(H1,H2,Hr):- cajaEn(azul,H1),cajaEn(verde,H2),posRobot(Hr) .
 objetivo(H1,H2,Hr):- cajaObjEn(azul,H1),cajaObjEn(verde,H2),posObjRobot(Hr) .
 
+
 %lo que se sabe objetivo
 cajaObjEn(azul,h1).
 cajaObjEn(verde,h1).

@@ -185,7 +185,7 @@ aCoger(Imp,verde):- %para la caja verde
       estado(_,H ,H) ,% conocer la ubicacion del robot
     objetivo(_,H2,_),%estado objetivo cubo
     H \== H2 , % en caso de ser diferente, significa que el cubo quiere cambiar
-    Col is (verde),% para la caja verde
+    %Col is (verde),% para la caja verde
     Imp is 15.
 
 
