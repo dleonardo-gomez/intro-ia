@@ -1,0 +1,17 @@
+
+/*
+%estas funciones deciden cual es la suiguiente accion a tomar
+
+% algo le llama la atencion en las cajas regadas en el piso, por lo que
+% decide recojer una
+accion(N,Col):- aCoger(AC,Col),aCCuarto(ACC,_,_),aSoltar(AS),
+    AC > ACC , AC > AS , N is 1.
+% le dan unas extrañas ganas de cambiar de cuarto, por lo que cambia de
+% cuarto
+accion(N,H1,H2):- aCoger(AC,_),aCCuarto(ACC,H1,H2),aSoltar(AS),
+    AC < ACC , AC > AS , N is 2 .
+
+% decide que realmente quiere soltar el cubo que tiene
+accion(N):-  aCoger(AC,_),aCCuarto(ACC,_,_),aSoltar(AS),
+    AC > ACC , AC < AS , N is 3 .
+%*/

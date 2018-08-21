@@ -1,198 +1,226 @@
+%Se inicia "menu."
+%Toca crearlo dinamico por que aja :v
 :-dynamic(pinza/0).
+:-dynamic(pinza/1).
 :-dynamic(robot/1).
 :-dynamic(cajaEn/2).
 :-dynamic(cajasHabitacion/2).
 
+% ya no se si sean necesarios
+%:-dynamic(estado/3).
+%:-dynamic(objetivo/3).
+
+%estado(cajaEn(azul,h1),cajaEn(verde,h1),robot(h1)).
+%objetivo(cajaEn(azul,h2),cajaEn(verde,h1),robot(h2)).
+estado(H1,H2,Hr):- cajaEn(azul,H1),cajaEn(verde,H2),posRobot(Hr) .
+objetivo(H1,H2,Hr):- cajaObjEn(azul,H1),cajaObjEn(verde,H2),posObjRobot(Hr) .
+
+%lo que se sabe objetivo
+cajaObjEn(azul,h1).
+cajaObjEn(verde,h1).
+cajasObjHabitacion(h1,[azul,verde]).
+cajasObjHabitacion(h2,[]).
+
+%Posicion del robot objetivo
+objRobot(h1).
+posObjRobot(H):- robot(H).
+
+%"objetos"
 caja(azul).
 caja(verde).
 habitacion(h1).
 habitacion(h2).
 puerta(h1,h2).
 
+%lo que se sabe"
 cajaEn(azul,h1).
 cajaEn(verde,h1).
 cajasHabitacion(h1,[azul,verde]).
 cajasHabitacion(h2,[]).
 
+
+%Estados de la pinza (Siempre toma el primero cuando inicia el programa, no se pueden borrar
+%los otros por que causa un error raro por algo dinamico)
 pinza().
+pinza(azul).
+pinza(verde).
+%Posicion del robot
 robot(h1).
 posRobot(H):- robot(H).
 
+%Comprueba si existe puerta
 existePuerta(X,Y):- puerta(X,Y); puerta(Y,X).
 %Comprueba si esta vacia
 plib():- pinza(),write('yes'),nl.
+%Coloca no si la pinza esta llena
 plib():- not(pinza()),write('no'),nl.
+%dice que caja tiene
+plib(Cajita):- pinza(Cajita),write('ni'),nl.
 
-ejecutar(Opcion):- Opcion == 1,coger(),menu;
-				Opcion == 2,plib(),menu;
-				Opcion == 3,mover(),menu;
-				Opcion == 4,posicion,menu;
-				Opcion == 5,soltar(),menu;
-				Opcion == 6,cajasCuarto(),menu;
-				Opcion == 0,false.
+%el menu
+ejecutar(Opcion):-
+    Opcion == 1,coger(),menu;
+    Opcion == 2,plib(),menu;
+    Opcion == 3,mover(),menu;
+    Opcion == 4,posicion,menu;
+    Opcion == 5,soltar(),menu;
+    Opcion == 6,cajasCuarto(),menu;
+    Opcion == 0,false,fail,!.
+
 menu:- write('1. coger: (Nombre de la caja)'),nl,write('2. vacia pinza ?'),nl
     ,write('3. Mover de _ a _ '),nl,write('4. Posicion robot '),nl
     ,write('5. Soltar '),nl,write('0. salir')
     ,read(Opcion),ejecutar(Opcion).
 
 %cajasCuarto():- write('Cuarto'), read(H), cajaEn(C,H), write(C),nl.
-cajasCuarto():- write('Cuarto'), read(H), cajasHabitacion(H,L),write(L),nl.
+%Esto lo voy a cambiar, toca quitar elementos de una lista.
+compararCoger(Cajita,L):- Cajita == azul,write('quita azul'), L = [verde],!.
+compararCoger(Cajita,L):- Cajita == verde, write('quita verde') ,L = [azul],!.
+compararCoger(Cajita,L):- Cajita == azul,write('quita azul'),cajaEn(verde,h2), L = [],!.
+compararCoger(Cajita,L):- Cajita == verde,cajaEn(azul,h2),write('quita verde'), L = [],!.
 
 
+my_remove_one_element(X, [X|Xs], Xs).
 
-%falta quitarla de las cajas del cuarto
-eliminarCoger:- retractall(pinza()),retractall(cajaEn(Cajita,_)),cajasHabitacion(H,M),retractall(cajasHabitacion(H,_)),assert(cajasHabitacion(H,M)),!.
-agregarCoger:- assert(pinza(Cajita)),!.
-coger(Cajita):-caja(Cajita),posRobot(H),cajaEn(Cajita,H),plib()
-    ,eliminarCoger,agregarCoger.
+my_remove_one_element(X, [Y|Ys], [Y|Zs]):- my_remove_one_element(X, Ys, Zs).
+%
 
+%Se agregan cosas a la pinza
+llenarPinza(Cajita):- assert(pinza(Cajita)),!.
+%Se quita la pinza vacia, se quita la habitacion de la caja, Este no se para que sirve lo dejare ahi por si acaso
+%elimina las cajas de la habitacion, esto es lo que quiero arreglar arriba, agrega la lista de cajas a la habitacion
+eliminarCoger(Cajita):- retractall(pinza()),retractall(cajaEn(Cajita,_)),cajasHabitacion(H,M),my_remove_one_element(Cajita,M, L),
+    retractall(cajasHabitacion(H,_)),assert(cajasHabitacion(H,L)),!.
+%Se coloca que se llena la pinza
+agregarCoger(Cajita):- llenarPinza(Cajita),!.
+%La caja que quiere leer, la caja, mira si la caja existe, obtiene posicion del robot, mira si
+%ambos estan en el mismo cuarto, mira si la pinza esta vacia
+%se hace lo de arriba, se hace lo de arriba
+coger():- write('Elemento a coger'),read(Cajita),caja(Cajita),posRobot(H),cajaEn(Cajita,H),plib()
+    ,eliminarCoger(Cajita),agregarCoger(Cajita).
 
+coger(Cajita):-
+    caja(Cajita),
+    posRobot(H),
+    cajaEn(Cajita,H),
+    plib(),
+    eliminarCoger(Cajita),
+    agregarCoger(Cajita).
+
+%Era para ver la posicion del robot creo que no se usa mas
 posicion:- posRobot(H),write(H),nl.
 
-eliminarMover:- retractall(robot(h1)),!.
-agregarMover:- assert(robot(h2)),!.
-mover(De,A):- existePuerta(De,A),eliminarMover,agregarMover.
+%se elimina el robot del cuarto donde esta
+eliminarMover(De):- retractall(robot(De)),!.
+%se agrega el robot al cuarto que quiere ir
+agregarMover(A):- assert(robot(A)),!.
+%Se piden los cuartos, comprueba si hay puerta, y pues lo mismo de arriba
+mover():- write('De'),read(De),write('a'),read(A),existePuerta(De,A),eliminarMover(De),agregarMover(A).
+mover(De,A):- existePuerta(De,A),eliminarMover(De),agregarMover(A).
 
+%Saca la lista del cuarto y la agrega a la lista del nuevo cuarto
+compararSoltar(H,Cajita,L):- write(Cajita),cajasHabitacion(H,M),L=[M|Cajita].
+
+    %Cajita == azul,cajasHabitacion(H,M), member(verde,M), L = [verde,azul];
+    %					Cajita == verde,cajasHabitacion(H,M), member(azul,M), L = [azul,verde];
+    %					Cajita ==
 %Falta agregar la caja al cuato cuando se agrega
-eliminarSoltar:- retractall(pinza(Cajita)),!.
-agregarSoltar:- assert(pinza()),posRobot(H),assert(cajaEn(Cajita,H)),write(H),!.
-soltarC():- plib(),eliminarSoltar,agregarSoltar.
+
+%Se mira la pos del roboto (Creo que no es necesario, si algo luego se quita, pero por ahora dejelo ahi),
+%elimina la pinza de la garra
+eliminarSoltar(Cajita):- posRobot(H),write(H),retractall(pinza(Cajita)),!.
+%La posicion del robot (aqui si importa), agrega a L(lista antigua) la nueva caja,
+%elimina las cajas de la habitacion, agrega la nueva lista (L), a la caja le agrega el cuarto al que corresponde
+agregarSoltar(Cajita):- posRobot(H),compararSoltar(H,Cajita,L),retractall(cajasHabitacion(H,_)),assert(cajasHabitacion(H,L)),write(H),write(L),assert(cajaEn(Cajita,H)),!.
+%Mira si la pinza tiene algo, hace lo de arriba, hace lo de arriba, se agrega la pinza vacia
+soltar():- plib(Cajita), write(Cajita),agregarSoltar(Cajita),eliminarSoltar(Cajita),assert(pinza()).
+
+%Imprime la lista de caja del cuarto que lee H
+cajasCuarto():- write('Cuarto'), read(H), cajasHabitacion(H,L),write(L),nl.
 
 
 %---------------------------------------------------------------------------------
 
 
-
-
-%lista de elementos de larbol
-estado(cajaEn(azul,h1),cajaEn(verde,h1),robot(h1)).
-objetivo(cajaEn(azul,h2),cajaEn(verde,h1),robot(h2)).
-
-/*
-estado(cajaEn(azul,h1),cajaEn(verde,h1),robot(h1)).
-objetivo(cajaEn(azul,h2),cajaEn(verde,h1),robot(h2)).
-*/
+%estado(H1,H2,Hr):- cajaEn(azul,H1),cajaEn(verde,H2),posRobot(Hr) .
+% objetivo(H1,H2,Hr):- cajaObjEn(azul,H1),cajaObjEn(verde,H2),posObjRobot(Hr).
 
 cicloACompObjetivo():-
     %alguna de estas se cumpla
-    %o que la caja azul este en el cuarto equivocado
-    (   (   cActCuartoC(CAa,azul),cObjCuartoC(COa,azul),CAa \== COa);
-    %o que la caja verde este en el cuarto equivocado
-    (   cActCuartoC(CAv,verde),cObjCuartoC(COv,verde), CAv \== COv);
-    %o que el robot este en el cuarto equivocado
-    (   cActCuartoRob(CAr),cObjCuartoRob(COr), CAr \== COr)),
+
+    estado(CAa,CAv,CAr),objetivo(COa,COv,COr),
+
+    (( CAa \== COa) ; (CAv \== COv);( CAr \== COr ) ),
 
     %entonces decide actuar
-    actuar().
+    accion(),
+    cicloACompObjetivo()
+    .
 
 
-%nodo([coger(1),cambiarCuarto(2),soltar(3)]).
+%[coger(1),cambiarCuarto(2),soltar(3)].
 
-
-%esta es la funcion que se llama para decidir cual es el siguiente paso
-actuar():-accion(N,Col), N = 1 ,coger(Col).
-actuar():-accion(N,H1,H2), N = 2,mover(H1,H2).
-actuar():-accion(N), N = 3, soltarC().
-
-
-
-% peligro si saben lo que les conviene, no pasen de este punto peligro
-% ya no se si siquiera entiendo lo que esta pasando, aunque falta
-% terminar las funciones aNombre, principalmente aCCuarto y aSoltar
-
-
-
-
-
-
-
-
-
-%estas funciones deciden cual es la suiguiente accion a tomar
-
-% algo le llama la atencion en las cajas regadas en el piso, por lo que
-% decide recojer una
-accion(N,Col):- aCoger(AC,Col),aCCuarto(ACC,_,_),aSoltar(AS),
-    AC > ACC , AC > AS , N is 1.
-% le dan unas extrañas ganas de cambiar de cuarto, por lo que cambia de
-% cuarto
-accion(N,H1,H2):- aCoger(AC,_),aCCuarto(ACC,H1,H2),aSoltar(AS),
-    AC < ACC , AC > AS , N is 2 .
-% decide que realmente quiere soltar el cubo que tiene
-accion(N):- aCoger(AC,_),aCCuarto(ACC,_,_),aSoltar(AS),
-    AC > ACC , AC < AS , N is 3 .
-
-
-
-
-
-
-% este pequeño conjunto de funciones supone facilitar la vida a la hora
-% de sacar valores de los estados
-
-% saca los cuartos en el estado actual
-cActCuartoC(Cuarto, Col):- Col == azul , estado([_|Cuarto],_,_). % caja azul
-cActCuartoC(Cuarto, Col):- Col == verde , estado(_,[_|Cuarto],_).% caja verde
-cActCuartoRob(Cuarto):- estado(_,_,[Cuarto|[]]). % robot
-
-% saca los cuartos en el estado objetivo
-cObjCuartoC(Cuarto,Col):- Col == azul , objetivo([_|Cuarto],_,_). % caja azul
-cObjCuartoC(Cuarto,Col):- Col == verde , objetivo(_,[_|Cuarto],_).% caja verde
-cObjCuartoRob(Cuarto):- objetivo(_,_,[Cuarto|[]]). % robot
-
-
-
-
+%-----
+accion():- aCoger(AC,Col),aCCuarto(ACC,H1,H2),aSoltar(AS),
+    (
+                                                  ( AC > ACC , AC > AS ,  write('coger ') ,coger(Col)   );% algo le llama la atencion en las cajas regadas en el piso, por lo que decide recojer una
+                                                  ( AC < ACC , AC > AS ,  write('mover') ,mover(H1,H2) );% le dan unas extrañas ganas de cambiar de cuarto, por lo que cambia de cuarto
+                                                  ( AC > ACC , AC < AS ,  write('soltar'),soltar()     ) % decide que realmente quiere soltar el cubo que tiene
+                                              ) .
 
 
 % importancia 15, ya que verdaderamente es lo que nuestro pequeño rob mas
 % desea en la vida
 %cajaEn(azul,h2)
-aCoger(Imp,Col):-
-    cActCuartoRob(H) ,% conocer la ubicacion del robot
-    Col = azul,%para la caja azul
-    cActCuartoC(H,Col),%estado actual caja
-    cObjCuartoC(H2,Col),%estado final
+aCoger(Imp,azul):- %para la caja azul
+    plib(),
+      estado(H ,_,H) ,% conocer la ubicacion del robot y del cubo azul
+    objetivo(H2,_,_),%estado objetivo cubo
     H \== H2 , % en caso de ser diferente, significa que el cubo quiere cambiar
-    /**/ plib,
+    %Col is (azul),%para la caja azul
     Imp is 15.
 
-aCoger(Imp,Col):-
-    cActCuartoRob(H) ,% conocer la ubicacion del robot
-    Col = verde,% para la caja verde
-    cActCuartoC(H,Col),%estado actual caja
-    cObjCuartoC(H2,Col),%estado final
+aCoger(Imp,verde):- %para la caja verde
+    plib(),
+      estado(_,H ,H) ,% conocer la ubicacion del robot
+    objetivo(_,H2,_),%estado objetivo cubo
     H \== H2 , % en caso de ser diferente, significa que el cubo quiere cambiar
-    /**/plib,
+    Col is (verde),% para la caja verde
     Imp is 15.
+
+
 
 %importancia 10
 aCCuarto(Imp,H,H2):- %con caja
-   /**/ noplib,
-   /**/ cuboenpinza(Col),
-   cObjCuartoC(HH,Col),
-   cActCuartoRob(Cr),
-   Cr \== HH,
-   H is Cr,
+   not(plib()),
+   plib(Col),
+   cajaObjEn(Col,HH),
+   estado(_,_,Hr),
+   Hr \== HH,
+   H is Hr,
    H2 is HH,
    Imp is 10.
 
 aCCuarto(Imp,H,H2):- %sin caja
-   cActCuartoRob(H),
-   cObjCuartoRob(H2),
-   H \== H2,
-   /**/ puertaEntre(H,H2),
-   Imp is 10.
+    plib(),
+    estado(_,_,H),
+    objetivo(_,_,H2),
+    H \== H2,
+    existePuerta(H,H2),
+    H is H,
+    H2 is H2,
+    Imp is 10.
 
 % importancia 20, va a querer soltar lo que traiga para poder hacer algo
 % mas, pero solo si el cubo asi lo quiere
-% % Cubo: no me sueltes Rob-senpai
+% % Caja: no me sueltes Rob-senpai
 % % Rob: nunca te soltaria caja-chan
-%   *procede a soltar a caja-chan*
+%   *procede cambiar de cuarto y soltar a caja-chan*
 % por favor quitar esto antes de entregar
 aSoltar(Imp):-
-    /**/ noplib, % pinza no vacia preguntarle a camilo como organizo esto
-    /**/ cuboenpinza(Col), % para saber cual es el cubo en la pinza
-    cActCuartoRob(H),% saber ubicacion de rob
-    cObjCuartoC(H,Col), % el objetivo es el cuarto en el que esta rob
-Imp is 20.
+    not(plib()), % pinza no vacia
+    plib(Col), % para saber cual es el cubo en la pinza
+    estado(_,_,H),% saber ubicacion de rob
+    cajaObjEn(Col,H), % el objetivo es el cuarto en el que esta rob
+    Imp is 20.
+
