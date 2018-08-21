@@ -6,18 +6,7 @@
 :-dynamic(cajaEn/2).
 :-dynamic(cajasHabitacion/2).
 
-/*hola
-%estado(H1,H2,Hr):-
-    posRobot(Hr),
-    cajaEn(azul,H1),
-    cajaEn(verde,H2),
-    !.
-%objetivo(H1,H2,Hr):-
-    cajaObjEn(azul,H1),
-    cajaObjEn(verde,H2),
-    posObjRobot(Hr) ,! .
-*/
-
+%----------------------------- objetivo
 %lo que se sabe objetivo
 cajaObjEn(azul,h2).
 cajaObjEn(verde,h1).
@@ -25,8 +14,22 @@ cajasObjHabitacion(h1,[azul,verde]).
 cajasObjHabitacion(h2,[]).
 
 %Posicion del robot objetivo
-objRobot(h2).
+objRobot(h1).
 posObjRobot(H):- objRobot(H).
+%----------------------------- final objetivo
+
+%----------------------------- estado actual
+%lo que se sabe"
+cajaEn(azul,h1).
+cajaEn(verde,h1).
+cajasHabitacion(h1,[azul,verde]).
+cajasHabitacion(h2,[]).
+
+%Posicion del robot
+robot(h1).
+posRobot(H):- robot(H).
+%----------------------------- final estado actual
+
 
 %"objetos"
 caja(azul).
@@ -35,21 +38,11 @@ habitacion(h1).
 habitacion(h2).
 puerta(h1,h2).
 
-%lo que se sabe"
-cajaEn(azul,h1).
-cajaEn(verde,h1).
-cajasHabitacion(h1,[azul,verde]).
-cajasHabitacion(h2,[]).
-
-
 %Estados de la pinza (Siempre toma el primero cuando inicia el programa, no se pueden borrar
 %los otros por que causa un error raro por algo dinamico)
 pinza().
 pinza(azul).
 pinza(verde).
-%Posicion del robot
-robot(h1).
-posRobot(H):- robot(H).
 
 %Comprueba si existe puerta
 existePuerta(X,Y):-
@@ -226,10 +219,10 @@ cicloACompObjetivo():-
     write('------------------------------------'),nl,
     %write('antes de accion'),
     imp(),
-    write('---------'),nl,
+
 
     %entonces decide actuar
-    accion(_,_,_,_),
+    accion(),
     imp(),
     not(final()),
 
@@ -264,77 +257,50 @@ impObjCv() :- (cajaObjEn(verde,Dat),write(' CV : '+Dat));(write(' NA')).
 
 %*/
 
-
-%[coger(1),cambiarCuarto(2),soltar(3)].
-% aCoger(AC,Col),aCCuarto(ACC,H1,H2),aSoltar(AS), AC @> ACC , AC @> AS% , write('coger ').
-
-
-%aCoger(AC,Col),aCCuarto(ACC,H1,H2),aSoltar(AS), (
-% AC < ACC , AC > AS ,% write('mover')).
-
-% aCoger(AC,Col),aCCuarto(ACC,H1,H2),aSoltar(AS), ( AC > ACC , AC < AS ,% write('soltar')).
-
-%-----
-%/*
-/*accion(AC,ACC,AS):-
-    aCoger(AC,Col),
-    aCCuarto(ACC,H1,H2),
-    aSoltar(AS),
-    (
-             (write('1 '),AC @> ACC , AC @> AS, write('coger '),coger(Col)  );nl;
-             (write('2 '),AC @< ACC , AC @> AS, write('mover '),mover(H1,H2));nl;
-             (write('3 '),AC @> ACC , AC @< AS, write('soltar'),soltar()    );nl
-    ),
-
-    !
-
-    .%*/
-
 %estado():- posObjRobot(COr) ;cajaObjEn(azul,COa);cajaObjEn(verde,COv).
 
-accion(AC,ACC,AS,N):-
-    (AC \== 0 ; AC \== 0 ; ACC \== 0)
-    ,
+accion():-
+    %(AC \== 0 ; AS \== 0 ; ACC \== 0),
     (
-        accionm(AC,ACC,AS,N);
-        accionc(AC,ACC,AS,N);
-        accions(AC,ACC,AS,N)
+
+        accionm();
+        accionc();
+        accions()
     ),!.
 
 
-accionc(AC,ACC,AS,N):-
+accionc():-
     aCoger(AC,Col),
     aCCuarto(ACC,_,_),
-    aSoltar(AS),
+    aSoltar(AS,_),
     %write('1'),
     AC >= ACC , AC >= AS,
     %write(' coger '),
-    coger(Col),
-    N is 1
+    coger(Col)
+    ,nl,write('----- coger '+Col),nl
     ,!
      .
-accionm(AC,ACC,AS,N):-
+accionm():-
     aCoger(AC,_),
     aCCuarto(ACC,H1,H2),
-    aSoltar(AS),
+    aSoltar(AS,_),
     %write('2'),
     ACC >= AC , ACC >= AS,
     %write(' mover') ,
-    mover(H1,H2),
-    N is 2
+    mover(H1,H2)
+    ,nl,write('----- mover de '+H1+' a '+H2 ),nl
     ,!
 
      .
-accions(AC,ACC,AS,N):-
+accions():-
     aCoger(AC,_),
     aCCuarto(ACC,_,_),
-    aSoltar(AS),
-    N is 0,
+    aSoltar(AS,Col),
     %write('3'),
     AS >= AC , AS >= ACC,
     %write(' soltar'),
-    soltar(),
-    N is 3
+    soltar()
+    ,nl,write('----- soltar '+ Col),nl
     ,!
      .
 
@@ -412,9 +378,9 @@ aaCCuarto(Imp,H,H2):- %sin caja -- probado
     ,!
     .
 
-aSoltar(Imp):- % probado 2
-    (   not(aaSoltar(Imp)),Imp is 0 ,!);
-    aaSoltar(Imp)
+aSoltar(Imp,Col):- % probado 2
+    (   not(aaSoltar(Imp,Col)),Imp is 0 ,!);
+    aaSoltar(Imp,Col)
     ,!
     .
 % importancia 20, va a querer soltar lo que traiga para poder hacer algo
@@ -423,7 +389,7 @@ aSoltar(Imp):- % probado 2
 % % Rob: nunca te soltaria caja-chan
 %   *procede cambiar de cuarto y soltar a caja-chan*
 % por favor quitar esto antes de entregar
-aaSoltar(Imp):- % -- probado 2
+aaSoltar(Imp,Col):- % -- probado 2
     not(plib()), % pinza no vacia
     plib(Col), % para saber cual es el cubo en la pinza
     posRobot(H),% saber ubicacion de rob
