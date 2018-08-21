@@ -6,15 +6,17 @@
 :-dynamic(cajaEn/2).
 :-dynamic(cajasHabitacion/2).
 
-% ya no se si sean necesarios
-%:-dynamic(estado/3).
-%:-dynamic(objetivo/3).
-
-%estado(cajaEn(azul,h1),cajaEn(verde,h1),robot(h1)).
-%objetivo(cajaEn(azul,h2),cajaEn(verde,h1),robot(h2)).
-estado(H1,H2,Hr):- cajaEn(azul,H1);cajaEn(verde,H2);posRobot(Hr) .
-objetivo(H1,H2,Hr):- cajaObjEn(azul,H1),cajaObjEn(verde,H2),posObjRobot(Hr) .
-
+/*hola
+%estado(H1,H2,Hr):-
+    posRobot(Hr),
+    cajaEn(azul,H1),
+    cajaEn(verde,H2),
+    !.
+%objetivo(H1,H2,Hr):-
+    cajaObjEn(azul,H1),
+    cajaObjEn(verde,H2),
+    posObjRobot(Hr) ,! .
+*/
 
 %lo que se sabe objetivo
 cajaObjEn(azul,h2).
@@ -216,93 +218,214 @@ cajasCuarto():-
 
 
 %---------------------------------------------------------------------------------
+init():- cicloACompObjetivo().
 
-
-%estado(H1,H2,Hr):- cajaEn(azul,H1),cajaEn(verde,H2),posRobot(Hr) .
-% objetivo(H1,H2,Hr):- cajaObjEn(azul,H1),cajaObjEn(verde,H2),posObjRobot(Hr).
-
+%/*
 cicloACompObjetivo():-
     %alguna de estas se cumpla
-
-    estado(CAa,CAv,CAr),objetivo(COa,COv,COr),
-
-    (( CAa \== COa) ; (CAv \== COv);( CAr \== COr ) ),
+    write('------------------------------------'),nl,
+    %write('antes de accion'),
+    imp(),
+    write('---------'),nl,
 
     %entonces decide actuar
-    accion(),
+    accion(_,_,_,_),
+    imp(),
+    not(final()),
+
     cicloACompObjetivo()
+    %,read(A)
     .
+
+final():-
+    (
+        posRobot(CAr),cajaEn(azul,CAa), cajaEn(verde,CAv)
+    ),
+    (
+        posObjRobot(COr),cajaObjEn(azul,COa),cajaObjEn(verde,COv)
+    ),
+    (
+        ( CAa == COa),
+        ( CAv == COv),
+        ( CAr == COr)
+    )
+    .
+imp():- impRob(),impCa(),impCv(),nl,
+
+    impObjRob(),impObjCa(),impObjCv(),nl,! .
+
+impRob():- (posRobot(Dat)    ,nl,write(' RB : '+Dat));(write(' NA')).
+impCa() :- (cajaEn(azul,Dat) ,write(' CA : '+Dat));(write(' NA')).
+impCv() :- (cajaEn(verde,Dat),write(' CV : '+Dat));(write(' NA')).
+
+impObjRob():- (posObjRobot(Dat)    ,nl,write(' RB : '+Dat));(write(' NA')).
+impObjCa() :- (cajaObjEn(azul,Dat) ,write(' CA : '+Dat));(write(' NA')).
+impObjCv() :- (cajaObjEn(verde,Dat),write(' CV : '+Dat));(write(' NA')).
+
+%*/
 
 
 %[coger(1),cambiarCuarto(2),soltar(3)].
+% aCoger(AC,Col),aCCuarto(ACC,H1,H2),aSoltar(AS), AC @> ACC , AC @> AS% , write('coger ').
+
+
+%aCoger(AC,Col),aCCuarto(ACC,H1,H2),aSoltar(AS), (
+% AC < ACC , AC > AS ,% write('mover')).
+
+% aCoger(AC,Col),aCCuarto(ACC,H1,H2),aSoltar(AS), ( AC > ACC , AC < AS ,% write('soltar')).
 
 %-----
-accion():- aCoger(AC,Col),aCCuarto(ACC,H1,H2),aSoltar(AS),
+%/*
+/*accion(AC,ACC,AS):-
+    aCoger(AC,Col),
+    aCCuarto(ACC,H1,H2),
+    aSoltar(AS),
     (
-                                                  ( AC > ACC , AC > AS ,  write('coger ') ,coger(Col)   );% algo le llama la atencion en las cajas regadas en el piso, por lo que decide recojer una
-                                                  ( AC < ACC , AC > AS ,  write('mover') ,mover(H1,H2) );% le dan unas extrañas ganas de cambiar de cuarto, por lo que cambia de cuarto
-                                                  ( AC > ACC , AC < AS ,  write('soltar'),soltar()     ) % decide que realmente quiere soltar el cubo que tiene
-                                              ) .
+             (write('1 '),AC @> ACC , AC @> AS, write('coger '),coger(Col)  );nl;
+             (write('2 '),AC @< ACC , AC @> AS, write('mover '),mover(H1,H2));nl;
+             (write('3 '),AC @> ACC , AC @< AS, write('soltar'),soltar()    );nl
+    ),
+
+    !
+
+    .%*/
+
+%estado():- posObjRobot(COr) ;cajaObjEn(azul,COa);cajaObjEn(verde,COv).
+
+accion(AC,ACC,AS,N):-
+    (AC \== 0 ; AC \== 0 ; ACC \== 0)
+    ,
+    (
+        accionm(AC,ACC,AS,N);
+        accionc(AC,ACC,AS,N);
+        accions(AC,ACC,AS,N)
+    ),!.
 
 
+accionc(AC,ACC,AS,N):-
+    aCoger(AC,Col),
+    aCCuarto(ACC,_,_),
+    aSoltar(AS),
+    %write('1'),
+    AC >= ACC , AC >= AS,
+    %write(' coger '),
+    coger(Col),
+    N is 1
+    ,!
+     .
+accionm(AC,ACC,AS,N):-
+    aCoger(AC,_),
+    aCCuarto(ACC,H1,H2),
+    aSoltar(AS),
+    %write('2'),
+    ACC >= AC , ACC >= AS,
+    %write(' mover') ,
+    mover(H1,H2),
+    N is 2
+    ,!
+
+     .
+accions(AC,ACC,AS,N):-
+    aCoger(AC,_),
+    aCCuarto(ACC,_,_),
+    aSoltar(AS),
+    N is 0,
+    %write('3'),
+    AS >= AC , AS >= ACC,
+    %write(' soltar'),
+    soltar(),
+    N is 3
+    ,!
+     .
+
+%*/
+
+
+
+
+
+%----------------------
+%de aqui en adelante hay dos tipos de funciones
+% aa : funciones que consiguen datos
+% a : funciones que en caso que las aa sean false, retornaran 0
+
+
+
+
+aCoger(Imp,Col):-
+    (   not(aaCoger(Imp,Col)),Imp is 0 ,!);
+    aaCoger(Imp,Col)
+    ,!
+    .
 % importancia 15, ya que verdaderamente es lo que nuestro pequeño rob
 % mas desea en la vida
 
-aCoger(Imp,azul):- %para la caja azul -- probado
+aaCoger(Imp,azul):- %para la caja azul -- probado 2
     plib(),
-      estado(H ,_,H) ,% conocer la ubicacion del robot y del cubo azul
-    objetivo(H2,_,_),%estado objetivo cubo
+    posRobot(H),cajaEn(azul,H),
+    cajaObjEn(azul,H2) ,
     H \== H2 , % en caso de ser diferente, significa que el cubo quiere cambiar
-    %Col is (azul),%para la caja azul
+    Imp is 15.
+%plib(),posRobot(H),cajaEn(azul,H),cajaObjEn(azul,H2) ,H \== H2.
+%
+aaCoger(Imp,verde):- %para la caja -- probado 2
+    plib(),
+    (posRobot(H),cajaEn(verde,H)),
+    (cajaObjEn(verde,H2)) ,
+    H \== H2 , % en caso de ser diferente, significa que el cubo quiere cambiar
     Imp is 15.
 
-aCoger(Imp,verde):- %para la caja verde
-    plib(),
-      estado(_,H ,H) ,% conocer la ubicacion del robot
-    objetivo(_,H2,_),%estado objetivo cubo
-    H \== H2 , % en caso de ser diferente, significa que el cubo quiere cambiar
-    %Col is (verde),% para la caja verde
-    Imp is 15.
+aCCuarto(Imp,H,H2):-
+    (   not(aaCCuarto(Imp,H,H2)),Imp is 0 ,!);
+    aaCCuarto(Imp,H,H2)
+    ,!
+    .
 
+%hmmm(I,H,H2):-aCCuarto(I,H,H2).
 %importancia 10
-aCCuarto(Imp,H,H2):- %con caja
+aaCCuarto(Imp,H,H2):- %con caja -- probado
    not(plib()),
    plib(Col),
+   posRobot(H),
    cajaObjEn(Col,H2),
-   estado(_,_,H),
    H \== H2,
-   %H is H,
-   %H2 is HH,
+   %A is H,
+   %B is H2,
    Imp is 10
-   , write('con caja'),nl
-   ,!
+   %, write('con caja'),nl
+   %,!
    .
-% estado(_,_,H),objetivo(_,_,H2),H \==
+
+
 % H2,existePuerta(H,H2),write('funciona'),nl.
-aCCuarto(Imp,H,H2):- %sin caja -- probado
+aaCCuarto(Imp,H,H2):- %sin caja -- probado
     plib(),
-    estado(_,_,H),
-    objetivo(_,_,H2),
+    posRobot(H),
+    posObjRobot(H2) ,
+
     H \== H2,
     existePuerta(H,H2),
     %H is H,
     %H2 is H2,
     Imp is 10
-    , write('sin caja'),nl
+    %, write('sin caja'),nl
     ,!
     .
 
+aSoltar(Imp):- % probado 2
+    (   not(aaSoltar(Imp)),Imp is 0 ,!);
+    aaSoltar(Imp)
+    ,!
+    .
 % importancia 20, va a querer soltar lo que traiga para poder hacer algo
 % mas, pero solo si el cubo asi lo quiere
 % % Caja: no me sueltes Rob-senpai
 % % Rob: nunca te soltaria caja-chan
 %   *procede cambiar de cuarto y soltar a caja-chan*
 % por favor quitar esto antes de entregar
-aSoltar(Imp):- %probado
+aaSoltar(Imp):- % -- probado 2
     not(plib()), % pinza no vacia
     plib(Col), % para saber cual es el cubo en la pinza
-    estado(_,_,H),% saber ubicacion de rob
+    posRobot(H),% saber ubicacion de rob
     cajaObjEn(Col,H), % el objetivo es el cuarto en el que esta rob
     Imp is 20.
-
-%not(plib()),plib(Col),estado(_,_,H),cajaObjEn(Col,H)
