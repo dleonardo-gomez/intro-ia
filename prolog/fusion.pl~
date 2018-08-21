@@ -38,8 +38,6 @@ habitacion(h1).
 habitacion(h2).
 puerta(h1,h2).
 
-
-
 %Estados de la pinza (Siempre toma el primero cuando inicia el programa, no se pueden borrar
 %los otros por que causa un error raro por algo dinamico)
 pinza().
@@ -249,13 +247,22 @@ imp():- impRob(),impCa(),impCv(),nl,
 
     impObjRob(),impObjCa(),impObjCv(),nl,! .
 
-impRob():- (posRobot(Dat)    ,nl,write(' RB : '+Dat));(write(' NA')).
-impCa() :- (cajaEn(azul,Dat) ,write(' CA : '+Dat));(write(' NA')).
-impCv() :- (cajaEn(verde,Dat),write(' CV : '+Dat));(write(' NA')).
+impRob():- nl,write(' RB : '),
+    (posRobot(Dat),write(Dat));(write('NA')).
+impCa() :- write(' CA : '),
+    (cajaEn(azul,Dat) ,write(Dat));(write('NA')).
 
-impObjRob():- (posObjRobot(Dat)    ,nl,write(' RB : '+Dat));(write(' NA')).
-impObjCa() :- (cajaObjEn(azul,Dat) ,write(' CA : '+Dat));(write(' NA')).
-impObjCv() :- (cajaObjEn(verde,Dat),write(' CV : '+Dat));(write(' NA')).
+impCv() :- write(' CV : '),
+    (cajaEn(verde,Dat),write(Dat));(write('NA')).
+
+impObjRob():- nl,write(' RB : '),
+    (posObjRobot(Dat)    ,write(Dat));(write('NA')).
+
+impObjCa() :- write(' CA : '),
+    (cajaObjEn(azul,Dat) ,write(Dat));(write('NA')).
+
+impObjCv() :- write(' CV : '),
+    (cajaObjEn(verde,Dat),write(Dat));(write('NA')).
 
 %*/
 
