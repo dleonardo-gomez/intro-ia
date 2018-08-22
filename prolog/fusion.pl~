@@ -9,12 +9,14 @@
 %----------------------------- objetivo
 %lo que se sabe objetivo
 cajaObjEn(azul,h2).
-cajaObjEn(verde,h1).
+cajaObjEn(verde,h2).
+objRobot(h1).
+
+
 cajasObjHabitacion(h1,[azul,verde]).
 cajasObjHabitacion(h2,[]).
 
 %Posicion del robot objetivo
-objRobot(h1).
 posObjRobot(H):- objRobot(H).
 %----------------------------- final objetivo
 
@@ -22,11 +24,13 @@ posObjRobot(H):- objRobot(H).
 %lo que se sabe"
 cajaEn(azul,h1).
 cajaEn(verde,h1).
+robot(h1).
+
+
 cajasHabitacion(h1,[azul,verde]).
 cajasHabitacion(h2,[]).
 
 %Posicion del robot
-robot(h1).
 posRobot(H):- robot(H).
 %----------------------------- final estado actual
 
@@ -62,6 +66,7 @@ plib():-
 */
 %dice que caja tiene
 plib(Cajita):-
+    not(plib()),
     pinza(Cajita)
     %,write('ni'),nl
     ,!.
@@ -98,19 +103,24 @@ llenarPinza(Cajita):-
     !.
 %Se quita la pinza vacia, se quita la habitacion de la caja, Este no se para que sirve lo dejare ahi por si acaso
 %elimina las cajas de la habitacion, esto es lo que quiero arreglar arriba, agrega la lista de cajas a la habitacion
+eliminarPinza(Cajita):-
+    Cajita == verde, retractall(pinza(azul));
+    Cajita == azul, retractall(pinza(verde)).
+%Se quita la pinza vacia, se quita la habitacion de la caja, Este no se para que sirve lo dejare ahi por si acaso
+%elimina las cajas de la habitacion, esto es lo que quiero arreglar arriba, agrega la lista de cajas a la habitacion
 eliminarCoger(Cajita):-
     retractall(pinza()),
+    eliminarPinza(Cajita),
     retractall(cajaEn(Cajita,_)),
+    posRobot(H),
     cajasHabitacion(H,M),
     my_remove_one_element(Cajita,M, L),
     retractall(cajasHabitacion(H,_)),
     assert(cajasHabitacion(H,L)),
     !.
-
 %Se coloca que se llena la pinza
 agregarCoger(Cajita):-
-    llenarPinza(Cajita),
-    !.
+    llenarPinza(Cajita).
 %La caja que quiere leer, la caja, mira si la caja existe, obtiene posicion del robot, mira si
 %ambos estan en el mismo cuarto, mira si la pinza esta vacia
 %se hace lo de arriba, se hace lo de arriba
@@ -131,7 +141,23 @@ coger(Cajita):-
     plib(),
     eliminarCoger(Cajita),
     agregarCoger(Cajita).
+/*
+caja(verde),posRobot(H),cajaEn(verde,H),plib(),
+    eliminarCoger(verde), -- revisar estas dos
+    agregarCoger(verde).
 
+
+eliminarCoger(Cajita):-
+retractall(pinza()),retractall(cajaEn(Cajita,_)),posRobot(H),cajasHabitacion(H,M),my_remove_one_element(Cajita,M,L),retractall(cajasHabitacion(H,_)),assert(cajasHabitacion(H,L)),
+    !.
+
+agregarCoger(Cajita):-
+    llenarPinza(Cajita),
+    !.
+
+
+
+*/
 %Era para ver la posicion del robot creo que no se usa mas
 posicion:-
     posRobot(H),
@@ -177,8 +203,8 @@ compararSoltar(H,Cajita,L):-
 %Se mira la pos del roboto (Creo que no es necesario, si algo luego se quita, pero por ahora dejelo ahi),
 %elimina la pinza de la garra
 eliminarSoltar(Cajita):-
-    posRobot(H),
-    write(H),
+    %posRobot(H),
+    %write(H),
     retractall(pinza(Cajita)),
     !.
 
@@ -206,27 +232,32 @@ soltar():-
 cajasCuarto():-
     write('Cuarto'),
     read(H),
-    cajasHabitacion(H,L),
-    write(L),nl.
+    cajasHabitacion(H,L)
+    %,write(L),nl
+    .
 
 
 %---------------------------------------------------------------------------------
-init():- cicloACompObjetivo().
+init():-
+    not(cicloACompObjetivo(10)),
+    nl,write('------------------------------------'),nl,
+    write('se ha llegado al estado objetivo').
 
 %/*
-cicloACompObjetivo():-
+cicloACompObjetivo(Cic):-
+    not(final()),
+    Cic > 0,
     %alguna de estas se cumpla
-    write('------------------------------------'),nl,
+    nl,write('------------------------------------'),nl,
     %write('antes de accion'),
     imp(),
-
-
     %entonces decide actuar
     accion(),
     imp(),
-    not(final()),
 
-    cicloACompObjetivo()
+    not(final()),
+    NCic is Cic -1,
+    cicloACompObjetivo(NCic)
     %,read(A)
     .
 
@@ -247,21 +278,21 @@ imp():- impRob(),impCa(),impCv(),nl,
 
     impObjRob(),impObjCa(),impObjCv(),nl,! .
 
-impRob():- nl,write(' RB : '),
-    (posRobot(Dat),write(Dat));(write('NA')).
-impCa() :- write(' CA : '),
-    (cajaEn(azul,Dat) ,write(Dat));(write('NA')).
+impRob():- nl,write(' | RB : '),
+    (posRobot(Dat),       write(Dat));(write('NA')).
+impCa() :- write(' | CA : '),
+    (cajaEn(azul,Dat) ,   write(Dat));(write('NA')).
 
-impCv() :- write(' CV : '),
-    (cajaEn(verde,Dat),write(Dat));(write('NA')).
+impCv() :- write(' | CV : '),
+    (cajaEn(verde,Dat),   write(Dat));(write('NA')).
 
-impObjRob():- nl,write(' RB : '),
+impObjRob():- nl,write(' | RB : '),
     (posObjRobot(Dat)    ,write(Dat));(write('NA')).
 
-impObjCa() :- write(' CA : '),
+impObjCa() :- write(' | CA : '),
     (cajaObjEn(azul,Dat) ,write(Dat));(write('NA')).
 
-impObjCv() :- write(' CV : '),
+impObjCv() :- write(' | CV : '),
     (cajaObjEn(verde,Dat),write(Dat));(write('NA')).
 
 %*/
