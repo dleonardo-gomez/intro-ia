@@ -15,9 +15,12 @@ existePuerta(X,Y):-
 estado(h1,h1,h1,h1).
 
 est(R,A,V,M):- estado(R,A,V,M).
-ubiC(azul,A):- estado(_,A,_,_).
-ubiC(verde,V):- estado(_,_,V,_).
-ubiC(morado,M):- estado(_,_,_,M).
+
+% hice estas funciones para ponerlo un poco mas generico mas adelante
+% las de objetivo funcionan igual y tienen el mismo objetivo
+ubiC(azul,A):- estado(_,A,_,_). % consigue el estado de azul
+ubiC(verde,V):- estado(_,_,V,_).% consigue el estado de verde
+ubiC(morado,M):- estado(_,_,_,M).% consigue el estado de morado
 
 %----------------------------- final estado actual
 
@@ -26,7 +29,7 @@ ubiC(morado,M):- estado(_,_,_,M).
 %objetivo(rob,c azul, c verde, c morado
 %
 
-objetivo(h1,h1,h1,h1).
+objetivo(h2,h2,h2,h2).
 
 obj(R,A,V,M):- objetivo(R,A,V,M).
 
@@ -36,6 +39,8 @@ ubiOC(morado,M):- objetivo(_,_,_,M).
 
 %----------------------------- final objetivo
 
+
+
 init():-
     not(cicObj(50)),
     nl,write('------------------------------------'),nl,
@@ -44,7 +49,7 @@ init():-
 cicObj(Cic):-
     Cic > 0,
     nl,write('------------------------------------'),nl,
-    accion( Val ),
+    accion( _ ),
     %/*
     (
         %(   heuristica(Heu), nl,write('heuristica '),write( Heu ));
@@ -52,15 +57,61 @@ cicObj(Cic):-
         heuristica(_)
     ),
     %*/
-    NTot is Tot + Val,
-    nl,write('valor total es '),write(NTot),nl,
-    imp(),
+    %NTot is Tot + Val,
+    %nl,write('valor total es '),write(NTot),nl,
+    %imp(),
 
-    not(final()),
+    %not(final()),
     NCic is Cic -1,
-    cicloObjetivo(NCic,NTot)
+    cicObj(NCic)
     %,read(A)
     .
+
+
+
+% inicio de las funcione de heuristica -------------------------------
+
+hmm(D):-
+    test(Da,Dv,Dm,Dr),
+    D is Da + Dv + Dm +Dr
+.
+heu(Da,Dv,Dm,Dr,D):-
+    cFin(azul,Da),
+    cFin(verde,Dv),
+    cFin(morado,Dm),
+    rFin(Dr),
+    D is Da + Dv + Dm + Dr
+    .
+
+% true si rob = estado final, false si rob dif a estado final
+
+
+rFin(Dif):-
+    (   not(rrFin()) , Dif is  1);
+    (  rrFin() , Dif is 0 ) .
+
+rrFin():- est(R,_,_,_),obj(R,_,_,_).
+
+
+cFin(Col,Dif):-
+   ccFin(Col,Dif);(not(ccFin(Col,Dif)),Dif is 0) .
+
+% bloque este en cuarto diferente al objetivo y diferente al robot
+ccFin(Col,Dif):-
+    ubiC(Col,H),ubiOC(Col,H1), H\== H1,
+    est(AR,_,_,_) , H \== AR,
+    Dif is 2.
+
+% bloque este en cuarto diferente al objetivo e igual al robot
+ccFin(Col,Dif):-
+    ubiC(Col,H),ubiOC(Col,H1), H\== H1,
+    est(H,_,_,_) ,Dif is 1.
+
+
+
+
+% final de las funcione de heuristica -------------------------------
+
 
 accion(Val):-
     (
@@ -71,21 +122,13 @@ accion(Val):-
 
 accionc(I):-
     aCoger(AC,Col),
-    %aCCuarto(ACC,_,_),
-    %aSoltar(AS,_),
-    %AC >= ACC , AC >= AS ,
     coger(Col)
     ,nl,write('----- coger '+Col),nl
     ,I is AC
     ,!
      .
 accionm(I):-
-    %aCoger(AC,_),
     aCCuarto(ACC,H1,H2),
-    %aSoltar(AS,_),
-    %write('2'),
-    %ACC >= AC , ACC >= AS,
-    %write(' mover') ,
     mover(H1,H2)
     ,nl,write('----- mover de '+H1+' a '+H2 ),nl
     ,I is ACC
@@ -93,11 +136,8 @@ accionm(I):-
 
      .
 accions(I):-
-    %aCoger(AC,_),
-    %aCCuarto(ACC,_,_),
     aSoltar(AS,Col),
-    %AS >= AC , AS >= ACC,
-    %write(' soltar'),
+    AS \== 0,
     soltar()
     ,nl,write('----- soltar '+ Col),nl
     ,
