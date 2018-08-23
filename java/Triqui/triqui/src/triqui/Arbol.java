@@ -50,6 +50,7 @@ public class Arbol {
 			if(nivelesBajar > 0){
 				hijos = new Arbol[nHijos];
 				for (int a =0 ; a<nHijos ; a++){
+					if(this.tab.espVac() - nivelesBajar>0)
 					hijos[a] = new Arbol(this.tab, turnoActual, nivelesBajar-1,a);
 				}
 			}
@@ -63,6 +64,7 @@ public class Arbol {
 	// True - Buscar los maximos, False - Buscar los minimos
 	public int podarArbol(int nivel, int alfa, boolean type) {
 		
+		if(nivel<=nHijos)
 		if(nivel>0) {
 			Random rand = new Random();
 			if(type) { // Maximos
@@ -113,6 +115,7 @@ public class Arbol {
 		else {
 			return this.tab.heuristica();
 		}
+		else return -1;
 	}
 
 	// Uso del poderoso poder que usa el poderoso alfa/beta

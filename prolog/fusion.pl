@@ -23,7 +23,8 @@ robot(h2).
 %----------------------------- objetivo
 %lo que se sabe objetivo
 cajaObjEn(azul,h1).
-cajaObjEn(verde,h2).
+cajaObjEn(verde,h1).
+cajaObjEn(morado,h1).
 objRobot(h1).
 
 
@@ -36,9 +37,10 @@ posObjRobot(H):- objRobot(H).
 
 %----------------------------- estado actual
 %lo que se sabe"
-cajaEn(azul,h2).
+cajaEn(azul,h1).
 cajaEn(verde,h1).
-robot(h2).
+cajaEn(morado,h1).
+robot(h1).
 
 
 %cajasHabitacion(h1,[azul,verde]).
@@ -53,6 +55,7 @@ posRobot(H):- robot(H).
 %"objetos"
 caja(azul).
 caja(verde).
+caja(morada).
 habitacion(h1).
 habitacion(h2).
 puerta(h1,h2).
@@ -62,6 +65,7 @@ puerta(h1,h2).
 pinza().
 pinza(azul).
 pinza(verde).
+pinza(morada).
 
 %Comprueba si existe puerta
 existePuerta(X,Y):-
@@ -170,43 +174,55 @@ soltar():-
 help():-
     nl, write('son 6 datos, solo pueden ser h1 o h2'),nl,
     nl, write('los primeros 3 son del estado actual y los ultimos 3 son del estado objetivo'),nl.
-init(Ar,Aa,Av,Or,Oa,Ov):-
-    ubicar(Ar,Aa,Av,Or,Oa,Ov),
+init(Ar,Aa,Av,Am,Or,Oa,Ov,Om):-
+    ubicar(Ar,Aa,Av,Or,Oa,Ov,Am,Om),
 
     not(cicloACompObjetivo(10)),
     nl,write('------------------------------------'),nl,
     write('se ha llegado al estado objetivo').
-/*
-ubicar(Ar,Aa,Av,Or,Oa,Ov):-
-    not(aubicar(Ar,Aa,Av,Or,Oa,Ov)),
-    nl, write('los datos solo pueden ser h1 o h2'),nl
-    .*/
-ubicar(Ar,Aa,Av,Or,Oa,Ov):-
-    /*(   Ar == h1 ; Ar == h2),
-    (   Aa == h1 ; Aa == h2),
-    (   Av == h1 ; Av == h2),
-    (   Or == h1 ; Or == h2),
-    (   Oa == h1 ; Oa == h2),
-    (   Ov == h1 ; Or == h2),*/
+
+
+ubicar(Ar,Aa,Av,Or,Oa,Ov,Am,Om):-
+
+    ubicarR(Ar,Or),
+    ubicarCA(Aa,Oa),
+    ubicarCV(Av,Ov),
+    ubicarCV(Am,Om)
+
+
+    .
+
+
+
+
+ubicarR(Ar,Or):-
     retractall(robot(_)),
     assert(robot(Ar)),
-
     retractall(objRobot(_)),
-    assert(objRobot(Or)),
-
+    assert(objRobot(Or))
+    .
+ubicarCA(Aa,Oa):-
     retractall(cajaEn(azul,_)),
     assert(cajaEn(azul,Aa)),
 
+    retractall(cajaObjEn(azul,_)),
+    assert(cajaObjEn(azul,Oa))
+    .
+ubicarCV(Av,Ov):-
     retractall(cajaEn(verde,_)),
     assert(cajaEn(verde,Av)),
 
-    retractall(cajaObjEn(azul,_)),
-    assert(cajaObjEn(azul,Oa)),
-
     retractall(cajaObjEn(verde,_)),
-    assert(cajaObjEn(verde,Ov)).
+    assert(cajaObjEn(verde,Ov))
 
+    .
+ubicarCM(Am,Om):-
+    retractall(cajaEn(morada,_)),
+    assert(cajaEn(morada,Am)),
 
+    retractall(cajaObjEn(morado,_)),
+    assert(cajaObjEn(morada,Om))
+    .
 
 
 %/*
@@ -229,23 +245,30 @@ cicloACompObjetivo(Cic):-
 
 final():-
     (
-        posRobot(CAr),cajaEn(azul,CAa), cajaEn(verde,CAv)
+        posRobot(CAr),cajaEn(azul,CAa), cajaEn(verde,CAv),
+    cajaEn(morada,CAm)
     ),
     (
-        posObjRobot(COr),cajaObjEn(azul,COa),cajaObjEn(verde,COv)
+        posObjRobot(COr),cajaObjEn(azul,COa),cajaObjEn(verde,COv),
+        cajaObjEn(morada,COm)
     ),
     (
         ( CAa == COa),
         ( CAv == COv),
-        ( CAr == COr)
+        ( CAr == COr),
+        ( CAm == COm)
     )
     .
-imp():- impRob(),impCa(),impCv(),nl,
+imp():- impRob(),impCa(),impCv(),impCm(),nl,
 
-    impObjRob(),impObjCa(),impObjCv(),nl,! .
+    impObjRob(),impObjCa(),impObjCv(),impObjCm(),nl,! .
 
 impRob():- nl,write(' | RB : '),
     (posRobot(Dat),       write(Dat));(write('NA')).
+
+impCm() :- write(' | CM : '),
+    (cajaEn(morada,Dat) ,   write(Dat));(write('NA')).
+
 impCa() :- write(' | CA : '),
     (cajaEn(azul,Dat) ,   write(Dat));(write('NA')).
 
@@ -254,6 +277,10 @@ impCv() :- write(' | CV : '),
 
 impObjRob():- nl,write(' | RB : '),
     (posObjRobot(Dat)    ,write(Dat));(write('NA')).
+
+impObjCm() :- write(' | CM : '),
+    (cajaObjEn(morado,Dat) ,write(Dat));(write('NA')).
+
 
 impObjCa() :- write(' | CA : '),
     (cajaObjEn(azul,Dat) ,write(Dat));(write('NA')).
@@ -333,6 +360,15 @@ aaCoger(Imp,azul):- %para la caja azul -- probado 2
     cajaObjEn(azul,H2) ,
     H \== H2 , % en caso de ser diferente, significa que el cubo quiere cambiar
     Imp is 15.
+
+
+aaCoger(Imp,morado):- %para la caja azul -- probado 2
+    plib(),
+    posRobot(H),cajaEn(morado,H),
+    cajaObjEn(morado,H2) ,
+    H \== H2 , % en caso de ser diferente, significa que el cubo quiere cambiar
+    Imp is 15.
+
 %plib(),posRobot(H),cajaEn(azul,H),cajaObjEn(azul,H2) ,H \== H2.
 %
 aaCoger(Imp,verde):- %para la caja -- probado 2

@@ -191,10 +191,10 @@ public class Tablero{
 			return -100;    
 		}
 		else if(no==2 && nx ==0){
-			return -10;    
+			return -5;    
 		}
 		else if(no==1 && nx ==0){
-			return -2;
+			return -1;
 		}
 		else if(no !=0 && nx !=0){
 			return 0;
@@ -428,7 +428,7 @@ public class Tablero{
 	}
 	
 	public int casoX() {
-		if(this.espVac() == 8) {
+		if(this.espVac() == 8 && tablero[1][1] == 0) {
 			int mark = 0;
 			for(int i=0;i<9;i++) {
 				if(tablero[i/3][i%3] != 0) {
@@ -443,8 +443,18 @@ public class Tablero{
 					cont++;
 				}
 			}
+			if(cont == 2) {
+				cont = 0;
+				if(tablero[0][0] == 2 && tablero[2][2] == 2) {
+					cont+=2;
+				}
+				if(tablero[0][2] == 2 && tablero[2][0] == 2) {
+					cont+=2;
+				}
+			}
 			
 			if(cont == 2) {
+				System.out.println("caso XX");
 				Random rand = new Random();
 				switch(rand.nextInt(4)) {
 					case(0):{
@@ -461,6 +471,20 @@ public class Tablero{
 					}
 				}
 				return this.mejorJugada();
+			}
+			else {
+				if(tablero[0][0] == 2 && tablero[0][2] == 2) {
+					return 1;
+				}
+				if(tablero[0][0] == 2 && tablero[2][0] == 2) {
+					return 3;
+				}
+				if(tablero[2][2] == 2 && tablero[0][2] == 2) {
+					return 5;
+				}
+				if(tablero[2][2] == 2 && tablero[2][0] == 2) {
+					return 7;
+				}
 			}
 		}
 		return -1;
