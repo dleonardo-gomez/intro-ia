@@ -48,39 +48,35 @@ init():-
 
 cicObj(Cic):-
     Cic > 0,
+    heu(HE),
+    %not(final()),
     nl,write('------------------------------------'),nl,
     accion( _ ),
-    %/*
-    (
-        %(   heuristica(Heu), nl,write('heuristica '),write( Heu ));
-        not(heuristica(_));
-        heuristica(_)
-    ),
-    %*/
-    %NTot is Tot + Val,
-    %nl,write('valor total es '),write(NTot),nl,
-    %imp(),
 
     %not(final()),
+
+
+
+
     NCic is Cic -1,
     cicObj(NCic)
-    %,read(A)
     .
 
 
+final():- % cuando sean iguales
+    est(R,A,V,M),obj(R,A,V,M)
+    .
 
 % inicio de las funcione de heuristica -------------------------------
 
-hmm(D):-
-    test(Da,Dv,Dm,Dr),
-    D is Da + Dv + Dm +Dr
-.
-heu(Da,Dv,Dm,Dr,D):-
+
+heu(D):-
     cFin(azul,Da),
     cFin(verde,Dv),
     cFin(morado,Dm),
     rFin(Dr),
-    D is Da + Dv + Dm + Dr
+    D is Da + Dv + Dm + Dr,
+    !
     .
 
 % true si rob = estado final, false si rob dif a estado final
@@ -113,14 +109,20 @@ ccFin(Col,Dif):-
 % final de las funcione de heuristica -------------------------------
 
 
-accion(Val):-
-    (
+accion(I):-
+    accionc(I,azul),
+    accionc(I,verde),
+    accionc(I,morado),
+    accionm(I),% solo es moverse de un cuarto al otro
+    accions(I),% solo tiene sentido si ya habia cogido algo
+    /*(
         (   accionm(M), Val is M );
         (   accionc(C), Val is C );
         (   accions(S), Val is S )
-    ),!.
+    )*/
+    !.
 
-accionc(I):-
+accionc(I,Col):-
     aCoger(AC,Col),
     coger(Col)
     ,nl,write('----- coger '+Col),nl
@@ -167,7 +169,7 @@ aCoger(Imp,Col):-
 % importancia 15, ya que verdaderamente es lo que nuestro pequeño rob
 % mas desea en la vida
 
-aaCoger(Imp,Col):- %para la caja azul -- probado 2
+aaCoger(Imp,Col):- %para cajas
     plib(),
     est(H,_,_,_),ubiC(Col,H),
     ubiOC(Col,H2) ,
@@ -179,10 +181,8 @@ aCCuarto(Imp,H,H2):-
     (   aaCCuarto(Imp,H,H2))
     ,!
     .
-
-%hmmm(I,H,H2):-aCCuarto(I,H,H2).
 %importancia 10
-aaCCuarto(Imp,H,H2):- %con caja -- probado
+aaCCuarto(Imp,H,H2):- %con caja
    not(plib()),
    plib(Col),
    est(H,_,_,_),
@@ -220,6 +220,5 @@ aaSoltar(Imp,Col):- % -- probado 2
     plib(Col), % para saber cual es el cubo en la pinza
     est(H,_,_,_),
     ubiOC(Col,H), % el objetivo es el cuarto en el que esta rob
-    Imp is 20,
-    soltar()
+    Imp is 20
     .
